@@ -5,8 +5,6 @@
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
-#include <linux/sev-guest.h>
-#include <linux/psp-sev.h>
 
 #ifndef PROG_NAME
 #define PROG_NAME	"sev-guest"
