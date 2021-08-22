@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
 	if (data_size % bytes_per_report > 0)
 		nr_reports++;
 
-	for (size_t i = 0; i <= nr_reports; i++) {
+	for (size_t i = 0; i < nr_reports; i++) {
 		uint8_t *block = key_data + i*bytes_per_report;
 		size_t block_size = data_size >= bytes_per_report ? bytes_per_report
 								  : data_size;
