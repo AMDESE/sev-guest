@@ -8,7 +8,9 @@ CFLAGS  := -g -Wall -O0 -Iinclude
 LDFLAGS := -lssl -lcrypto
 
 # Targets
-TARGETS := sev-guest sev-guest-get-report
+TARGETS := sev-guest
+TARGETS += sev-guest-get-report
+TARGETS += sev-guest-parse-report
 
 # Rules
 .PHONY: all clean
@@ -19,6 +21,9 @@ sev-guest: src/sev-guest.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 sev-guest-get-report: src/get-report.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+sev-guest-parse-report: src/parse-report.o src/report.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
