@@ -11,6 +11,7 @@ LDFLAGS := -lssl -lcrypto
 TARGETS := sev-guest
 TARGETS += sev-guest-get-report
 TARGETS += sev-guest-parse-report
+TARGETS += sev-guest-export-key
 
 # Rules
 .PHONY: all clean
@@ -24,6 +25,9 @@ sev-guest-get-report: src/get-report.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 sev-guest-parse-report: src/parse-report.o src/report.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+sev-guest-export-key: src/export-key.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
