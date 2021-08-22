@@ -84,12 +84,18 @@ out:
 	return rc;
 }
 
-int read_key_file(const char *file_name, uint8_t *buffer, size_t *size)
+/*
+ * NOTE:
+ * read_key_file() will allocate memory for the key bytes using malloc()
+ * and return a pointer to this memory in **buffer. This memory must be
+ * freed by the caller using free().
+ */
+int read_key_file(const char *file_name, uint8_t **buffer, size_t *size)
 {
 	int rc = EXIT_FAILURE;
 	FILE *key_file = NULL;
 	char *name = NULL, *header = NULL;
-	uint8_t	*data = NULL;
+	uint8_t	*data = NULL, *output = NULL;
 	long key_size = 0;
 
 	errno = 0;
@@ -106,7 +112,14 @@ int read_key_file(const char *file_name, uint8_t *buffer, size_t *size)
 		goto out_close;
 	}
 
-	memcpy(buffer, data, key_size);
+	output = malloc(key_size);
+	if (!output) {
+		rc = ENOMEM;
+		goto out_close;
+	}
+
+	memcpy(output, data, key_size);
+	*buffer = output;
 	*size = key_size;
 	rc = EXIT_SUCCESS;
 
@@ -240,8 +253,8 @@ int main(int argc, char *argv[])
 	int rc = EXIT_FAILURE;
 	char *key_filename = NULL, *report_filename = NULL;
 	struct attestation_report report;
-	uint8_t key_data[sizeof(report.report_data)] = {0};
-	size_t data_size = sizeof(report.report_data);
+	uint8_t *key_data = NULL;
+	size_t data_size = 0;
 
 	memset(&report, 0, sizeof(report));
 
@@ -254,7 +267,7 @@ int main(int argc, char *argv[])
 
 	/* If a key file was specified, add the key to the request */
 	if (key_filename) {
-		rc = read_key_file(key_filename, key_data, &data_size);
+		rc = read_key_file(key_filename, &key_data, &data_size);
 		if (rc != EXIT_SUCCESS) {
 			errno = rc;
 			perror("read_key_file");
@@ -285,7 +298,7 @@ int main(int argc, char *argv[])
 		if (rc != EXIT_SUCCESS) {
 			errno = rc;
 			perror("get_report");
-			goto exit;
+			goto exit_free;
 		}
 
 		length = 1 + snprintf(file_name, length, "%s.%03ld", report_filename, i);
@@ -293,7 +306,7 @@ int main(int argc, char *argv[])
 			rc = EIO;
 			errno = rc;
 			perror("snprintf");
-			goto exit;
+			goto exit_free;
 		}
 
 		file_name = calloc(sizeof(char), length);
@@ -301,7 +314,7 @@ int main(int argc, char *argv[])
 			rc = ENOMEM;
 			errno = rc;
 			perror("calloc");
-			goto exit;
+			goto exit_free;
 		}
 
 		length = snprintf(file_name, length, "%s.%03ld", report_filename, i);
@@ -309,7 +322,7 @@ int main(int argc, char *argv[])
 			rc = EIO;
 			errno = rc;
 			perror("snprintf");
-			goto exit;
+			goto exit_free;
 		}
 
 		/* Write the report to the output file */
@@ -317,7 +330,7 @@ int main(int argc, char *argv[])
 		if (rc != EXIT_SUCCESS) {
 			errno = rc;
 			perror("write_report");
-			goto exit;
+			goto exit_free;
 		}
 
 		data_size -= bytes_per_report;
@@ -328,6 +341,12 @@ int main(int argc, char *argv[])
 	}
 
 	rc = EXIT_SUCCESS;
+
+exit_free:
+	if (key_data) {
+		free(key_data);
+		key_data = NULL;
+	}
 exit:
 	exit(rc);
 }
