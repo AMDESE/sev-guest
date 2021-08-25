@@ -1,2 +1,3 @@
 sev-guest*
+sev-host*
 src/*.o

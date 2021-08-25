@@ -12,6 +12,9 @@ TARGETS := sev-guest
 TARGETS += sev-guest-get-report
 TARGETS += sev-guest-parse-report
 
+TARGETS += sev-host
+TARGETS += sev-host-set-cert-chain
+
 # Rules
 .PHONY: all clean
 
@@ -25,6 +28,12 @@ sev-guest-get-report: src/get-report.o
 
 sev-guest-parse-report: src/parse-report.o src/report.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+sev-host: src/sev-host.o
+	$(CC) $(CFLAGS) -o $@ $^
+
+sev-host-set-cert-chain: src/set-cert-chain.o
+	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
 	$(RM) $(TARGETS) $(OBJECTS)
