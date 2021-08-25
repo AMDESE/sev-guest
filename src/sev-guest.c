@@ -34,7 +34,8 @@ int main(int argc, char *argv[])
 		const char *command;
 		char *exec_name;
 	} commands[] = {
-		{ "get-report", PROG_NAME "-get-report" },
+		{ "get-report",   PROG_NAME "-get-report"   },
+		{ "parse-report", PROG_NAME "-parse-report" },
 	};
 
 	if (argc < MIN_NR_ARGS) {
