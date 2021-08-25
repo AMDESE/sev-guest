@@ -46,6 +46,7 @@ int parse_options(int argc, char *argv[], union operations *ops,
 	struct option long_options[] = {
 		{ "key",  no_argument,       NULL, 'k' },
 		{ "tcb",  no_argument,       NULL, 't' },
+		{ 0 },
 	};
 
 	if (argc < NR_ARGS_REQUIRED) {
