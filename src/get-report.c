@@ -234,11 +234,18 @@ out:
 
 void print_digest(const uint8_t *digest, size_t size)
 {
+#define BYTES_PER_LINE	32
+#define INDENT		"    "
+
 	if (!digest || size == 0)
 		return;
 
-	for (size_t i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++) {
+		if (i % BYTES_PER_LINE == 0)
+			printf("\n" INDENT);
 		printf("%02x", digest[i]);
+	}
+	putchar('\n');
 }
 
 int get_report(const uint8_t *data, size_t data_size,
@@ -604,7 +611,7 @@ int main(int argc, char *argv[])
 	memset(&certs, 0, sizeof(certs));
 
 	/* Set default options */
-	options.digest_name = "sha256";
+	options.digest_name = "sha512";
 
 	/* Parse command line options */
 	rc = parse_options(argc, argv, &options);
