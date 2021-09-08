@@ -20,8 +20,9 @@ void print_usage(void)
 	fprintf(stderr, "Usage: " PROG_NAME " command [args...]\n"
 		"\n"
 		"commands:\n"
-		"    get-report: retrieve the attestation report from \n"
-		"                the firmware.\n"
+		"    get-report:   Retrieve the attestation report from \n"
+		"                  the firmware.\n"
+		"    parse-report: Print select fields from the attestation report.\n"
 		"\n");
 }
 
