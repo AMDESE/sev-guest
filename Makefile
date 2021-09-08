@@ -27,25 +27,25 @@ TARGETS += cert-table-tests
 all: $(TARGETS)
 
 sev-guest: $(SOURCE_DIR)/sev-guest.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^
 
 sev-guest-get-report: $(SOURCE_DIR)/get-report.o $(SOURCE_DIR)/cert-table.o
-	$(CC) $(CFLAGS) -o $@ $^ $(OPENSSL_LDFLAGS) $(UUID_LDFLAGS)
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(OPENSSL_LDFLAGS) $(UUID_LDFLAGS)
 
 sev-guest-parse-report: $(SOURCE_DIR)/parse-report.o $(SOURCE_DIR)/report.o
-	$(CC) $(CFLAGS) -o $@ $^ $(OPENSSL_LDFLAGS)
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(OPENSSL_LDFLAGS)
 
 sev-guest-get-cert-chain: $(SOURCE_DIR)/get-cert-chain.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^
 
 sev-host: $(SOURCE_DIR)/sev-host.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^
 
 sev-host-set-cert-chain: $(SOURCE_DIR)/set-cert-chain.o $(SOURCE_DIR)/cert-table.o
-	$(CC) $(CFLAGS) -o $@ $^ $(UUID_LDFLAGS)
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(UUID_LDFLAGS)
 
 cert-table-tests: $(TESTS_DIR)/cert-table-tests.o $(SOURCE_DIR)/cert-table.o
-	$(CC) $(CFLAGS) -o $@ $^ $(UUID_LDFLAGS)
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(UUID_LDFLAGS)
 
 cscope:
 	find $(TOP_DIR) -name "*.[chsS]" -a -type f > cscope.files
