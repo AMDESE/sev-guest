@@ -31,8 +31,8 @@ int cert_table_alloc(struct cert_table *table, size_t nr_entries)
 	}
 
 	/* Check that the requested table size will not overflow */
-	if ((entry_size * nr_entries) < entry_size ||
-	    (entry_size * nr_entries) < nr_entries) {
+	if ((entry_size * (nr_entries + 1)) < entry_size ||
+	    (entry_size * (nr_entries + 1)) < nr_entries) {
 		rc = EOVERFLOW;
 		goto out;
 	}
@@ -45,7 +45,7 @@ int cert_table_alloc(struct cert_table *table, size_t nr_entries)
 	}
 
 	/* The offset of the first certificate is simply the size of the table */
-	table->entry[0].offset = entry_size * nr_entries;
+	table->entry[0].offset = entry_size * (nr_entries + 1);
 
 	/*
 	 * To simplify iterating over the table entries, initialize the guids
@@ -116,8 +116,10 @@ int cert_table_add_entry(struct cert_table *table, const char *guid, size_t cert
 
 		/* Found an empty table entry, so fill it */
 		rc = uuid_parse(guid, entry->guid);
-		if (rc != 0)
+		if (rc != 0) {
+			rc = EINVAL;
 			goto out;
+		}
 
 		entry->offset = offset;
 		entry->length = cert_size;
