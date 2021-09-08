@@ -22,7 +22,7 @@ TARGETS += sev-host-set-cert-chain
 TARGETS += cert-table-tests
 
 # Rules
-.PHONY: all clean
+.PHONY: all clean cscope
 
 all: $(TARGETS)
 
@@ -47,5 +47,9 @@ sev-host-set-cert-chain: $(SOURCE_DIR)/set-cert-chain.o $(SOURCE_DIR)/cert-table
 cert-table-tests: $(TESTS_DIR)/cert-table-tests.o $(SOURCE_DIR)/cert-table.o
 	$(CC) $(CFLAGS) -o $@ $^ $(UUID_LDFLAGS)
 
+cscope:
+	find $(TOP_DIR) -name "*.[chsS]" -a -type f > cscope.files
+	cscope -b -q
+
 clean:
-	$(RM) $(TARGETS) $(OBJECTS)
+	$(RM) $(TARGETS) $(OBJECTS) cscope.*
