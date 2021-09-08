@@ -33,7 +33,7 @@ sev-guest-get-report: $(SOURCE_DIR)/get-report.o $(SOURCE_DIR)/cert-table.o
 	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(OPENSSL_LDFLAGS) $(UUID_LDFLAGS)
 
 sev-guest-parse-report: $(SOURCE_DIR)/parse-report.o $(SOURCE_DIR)/report.o
-	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(OPENSSL_LDFLAGS)
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^
 
 sev-guest-get-cert-chain: $(SOURCE_DIR)/get-cert-chain.o
 	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^

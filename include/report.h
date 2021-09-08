@@ -16,4 +16,9 @@ void print_reported_tcb(struct attestation_report *report);
  */
 void print_tcb(struct attestation_report *report);
 
+/*
+ * Print the report data (in hex) supplied by the guest.
+ */
+void print_report_data(struct attestation_report *report);
+
 #endif	/* REPORT_H */
