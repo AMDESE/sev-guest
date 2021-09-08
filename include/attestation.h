@@ -13,7 +13,7 @@ struct attestation_report {
 	uint8_t  image_id[16];		/* 0x020 */
 	uint32_t vmpl;			/* 0x030 */
 	uint32_t signature_algo;	/* 0x034 */
-	uint64_t platform_version;	/* 0x038 */
+	uint8_t  platform_version[8];	/* 0x038 */
 	uint64_t platform_info;		/* 0x040 */
 	uint32_t flags;			/* 0x048 */
 	uint32_t reserved0;		/* 0x04C */

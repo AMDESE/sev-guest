@@ -11,4 +11,9 @@
  */
 void print_reported_tcb(struct attestation_report *report);
 
+/*
+ * Print the TCB version.
+ */
+void print_tcb(struct attestation_report *report);
+
 #endif	/* REPORT_H */
