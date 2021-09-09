@@ -14,7 +14,6 @@ UUID_LDFLAGS    := -luuid
 TARGETS := sev-guest
 TARGETS += sev-guest-get-report
 TARGETS += sev-guest-parse-report
-TARGETS += sev-guest-get-cert-chain
 
 TARGETS += sev-host
 TARGETS += sev-host-set-cert-chain
@@ -33,9 +32,6 @@ sev-guest-get-report: $(SOURCE_DIR)/get-report.o $(SOURCE_DIR)/cert-table.o
 	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(OPENSSL_LDFLAGS) $(UUID_LDFLAGS)
 
 sev-guest-parse-report: $(SOURCE_DIR)/parse-report.o $(SOURCE_DIR)/report.o
-	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^
-
-sev-guest-get-cert-chain: $(SOURCE_DIR)/get-cert-chain.o
 	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^
 
 sev-host: $(SOURCE_DIR)/sev-host.o
