@@ -37,6 +37,7 @@ struct options {
 	const char *amd_certs[NR_AMD_CERTS];
 	struct guid_map *maps;
 	size_t nr_guids;
+	size_t nr_amd_certs;
 	bool do_help;
 };
 
@@ -108,12 +109,15 @@ int parse_options(int argc, char *argv[], struct options *options)
 			break;
 		case 'r':
 			options->amd_certs[AMD_CERT_ARK] = optarg;
+			options->nr_amd_certs++;
 			break;
 		case 's':
 			options->amd_certs[AMD_CERT_ASK] = optarg;
+			options->nr_amd_certs++;
 			break;
 		case 'v':
 			options->amd_certs[AMD_CERT_VCEK] = optarg;
+			options->nr_amd_certs++;
 			break;
 		case 'h':
 			options->do_help = true;
@@ -164,12 +168,12 @@ int update_cert_table(const struct options *options, struct cert_table *table)
 	}
 
 	/* Initialize the cert table */
-	rc = cert_table_alloc(table, NR_AMD_CERTS + options->nr_guids);
+	rc = cert_table_alloc(table, options->nr_amd_certs + options->nr_guids);
 	if (rc != EXIT_SUCCESS)
 		goto out;
 
 	/* Determine the size of any AMD certificates and update the table entries */
-	for (size_t i = 0; i < NR_AMD_CERTS; i++) {
+	for (size_t i = 0; i < options->nr_amd_certs; i++) {
 		struct stat stats = { .st_size = 0 };
 
 		if (!options->amd_certs[i])
@@ -365,10 +369,13 @@ int read_certs(const struct options *options, uint8_t **buffer, size_t *size)
 		goto out_free;
 
 	/* Use the cert table entries to place the AMD certs into the buffer */
-	for (size_t i = 0; i < NR_AMD_CERTS; i++) {
+	for (size_t i = 0; i < options->nr_amd_certs; i++) {
 		FILE *file = NULL;
 		size_t count = 0;
 		struct cert_table_entry entry;
+
+		if (!options->amd_certs[i])
+			continue;
 
 		switch (i) {
 		case AMD_CERT_VCEK:
