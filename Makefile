@@ -1,7 +1,7 @@
 TOP_DIR    := $(shell pwd)
 TESTS_DIR  := tests
 SOURCE_DIR := src
-SOURCES    := $(shell find $(SOURCE_DIR) -name "*.c")
+SOURCES    := $(shell find $(SOURCE_DIR) $(TESTS_DIR) -name "*.c")
 OBJECTS    := $(SOURCES:.c=.o)
 
 # Tools
