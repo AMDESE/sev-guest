@@ -48,15 +48,9 @@ void print_reported_tcb(struct attestation_report *report)
  */
 void print_report_data(struct attestation_report *report)
 {
-#define BYTES_PER_LINE	32
-#define INDENT	"    "
-
 	if (report) {
 		printf("Report Data: ");
 		for (size_t i = 0; i < sizeof(report->report_data); i++) {
-			if (i % BYTES_PER_LINE == 0)
-				printf("\n"
-				       INDENT);
 			printf("%02x", report->report_data[i]);
 		}
 		putchar('\n');
