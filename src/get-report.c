@@ -491,6 +491,7 @@ int write_cert(const struct cert_table_entry *entry, const uint8_t *buffer, size
 	FILE *file = NULL;
 	size_t count = 0, cert_end = 0;
 	char uuid_str[UUID_STR_LEN] = {0};
+	char *filename = NULL;
 
 	if (!entry || !buffer || size == 0) {
 		rc = EINVAL;
@@ -512,9 +513,24 @@ int write_cert(const struct cert_table_entry *entry, const uint8_t *buffer, size
 	/* Get the GUID as a character string */
 	uuid_unparse(entry->guid, uuid_str);
 
+	/*
+	 * If the GUID is defined in the GHCB spec, use the defined
+	 * name in the spec as the file name with a .cert extension.
+	 * Otherwise, just use the GUID as the file name.
+	 */
+	if (memcmp(uuid_str, vcek_guid, sizeof(uuid_str)) == 0) {
+		filename = "vcek.cert";
+	} else if (memcmp(uuid_str, ask_guid, sizeof(uuid_str)) == 0) {
+		filename = "ask.cert";
+	} else if (memcmp(uuid_str, ark_guid, sizeof(uuid_str)) == 0) {
+		filename = "ark.cert";
+	} else {
+		filename = uuid_str;
+	}
+
 	/* Open the output certificate file */
 	errno = 0;
-	file = fopen(uuid_str, "w+");
+	file = fopen(filename, "w+");
 	if (!file) {
 		rc = errno;
 		perror("fopen");
@@ -529,7 +545,7 @@ int write_cert(const struct cert_table_entry *entry, const uint8_t *buffer, size
 		goto out_close;
 	}
 
-	printf("wrote %s\n", uuid_str);
+	printf("wrote %s\n", filename);
 	rc = EXIT_SUCCESS;
 
 out_close:

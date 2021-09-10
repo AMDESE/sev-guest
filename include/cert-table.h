@@ -6,9 +6,9 @@
 #include <stdint.h>
 #include <uuid/uuid.h>
 
-extern const char *vcek_guid;
-extern const char *ask_guid;
-extern const char *ark_guid;
+extern const char vcek_guid[];
+extern const char ask_guid[];
+extern const char ark_guid[];
 
 /*
  * Per the GHCB spec version 2, this table must be terminated
