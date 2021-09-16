@@ -1,0 +1,1 @@
+SUBSYSTEM=="misc", KERNEL=="sev", ACTION=="add|change", GROUP="www-data", MODE="0660"

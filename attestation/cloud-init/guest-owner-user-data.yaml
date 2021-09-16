@@ -1,0 +1,30 @@
+#cloud-config
+users:
+  - name: go
+    gecos: Guest Owner
+#    ssh_authorized_keys:
+#      - Guest Owner's SSH public key here
+
+runcmd:
+  - mkdir -p /run/attestation
+  - cd /run/attestation
+  - hostname > hostname
+  - cp /etc/ssh/ssh_host_rsa_key.pub .
+  - cp /home/go/.ssh/authorized_keys guest_owner.pub
+  - cat ssh_host_rsa_key.pub guest_owner.pub > pubkeys
+  - sev-guest get-report -f pubkeys -x guest_report.bin
+# Uncomment the following line to see an attestation failure.
+#  - dd if=/dev/random of=guest_report.bin count=1
+  - tar -cvf guest-report.tar *.cert guest_report.bin hostname pubkeys
+  - /usr/local/bin/upload-guest-report.sh guest-report.tar
+  - rm -f /usr/local/bin/upload-guest-report.sh
+
+# The curl command below includes several ':' characters that yaml would treat specially
+# under runcmd. Instead, just write the command to a file and execute it from runcmd.
+write_files:
+  - path: /usr/local/bin/upload-guest-report.sh
+    permissions: "0755"
+    content: |
+      #!/bin/bash
+      curl --data-binary @${1} -H "Content-Type: application/octet-stream" http://attestation.example.com/cgi-bin/guest-attestation.sh
+
