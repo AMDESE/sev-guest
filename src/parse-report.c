@@ -141,15 +141,15 @@ int main(int argc, char *argv[])
 		goto exit_close_report;
 	}
 
-	if (ops.print_data) {
+	if (ops.print_data)
 		print_report_data(&report);
-	}
 
-	if (ops.print_tcb) {
+	if (ops.print_tcb)
 		print_reported_tcb(&report);
-	}
 
-	/* TODO: If no operations were requested, just print the report */
+	/* If no operations were requested, just print the report */
+	if (ops.raw == 0)
+		print_report(&report);
 
 exit_close_report:
 	if (report_file) {
