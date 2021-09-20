@@ -51,11 +51,11 @@ update_known_hosts()
 {
 	local dir=$1
 	local hostname=$(cat ${dir}/hostname)
-	local ip=$(multipass list | grep ${hostname} | sed -e 's/[ ] */ /g' | cut -d ' ' -f3)
+	local address=$(cat ${dir}/address)
 	local inotify_dir="/var/www/attestation"
 
 	if [ -d ${inotify_dir} ]; then
-		ssh-keyscan -H -t rsa ${ip} > ${inotify_dir}/${hostname} 2>&1
+		ssh-keyscan -H -t rsa ${address} > ${inotify_dir}/${hostname} 2>&1
 	fi
 }
 
