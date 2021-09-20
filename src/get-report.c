@@ -32,6 +32,7 @@ struct options {
 	const char *report_filename;
 	const char *cert_dirname;
 	bool        do_extended_report;
+	bool        do_custom_digest;
 	bool	    do_help;
 };
 
@@ -95,6 +96,7 @@ int parse_options(int argc, char *argv[], struct options *options)
 			options->cert_dirname = optarg;
 			break;
 		case 'd':
+			options->do_custom_digest = true;
 			options->digest_name = optarg;
 			break;
 		case 'f':
@@ -120,7 +122,7 @@ int parse_options(int argc, char *argv[], struct options *options)
 		optind++;
 	}
 
-	if (options->digest_name && !options->data_filename) {
+	if (options->do_custom_digest && !options->data_filename) {
 		/* TODO: read data from stdin */
 		fprintf(stderr, "-d specified, but no data file specified!\n");
 		rc = EINVAL;
