@@ -1,3 +1,4 @@
+/* Copyright (C) 2021 Advanced Micro Devices, Inc. */
 
 #include <stdio.h>
 #include <stdlib.h>
