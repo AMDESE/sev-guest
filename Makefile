@@ -46,7 +46,7 @@ cert-table-tests: $(TESTS_DIR)/cert-table-tests.o $(SOURCE_DIR)/cert-table.o
 	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(UUID_LDFLAGS)
 
 fuzz-wrapper: $(TESTS_DIR)/fuzz-wrapper.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^
 
 cscope:
 	find $(TOP_DIR) -name "*.[chsS]" -a -type f > cscope.files
