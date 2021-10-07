@@ -1,1 +1,4 @@
+# Rules to grant the web server access to the sev kernel device.
+#
+# This allows the CGI scripts to run as the www-data user and not as root.
 SUBSYSTEM=="misc", KERNEL=="sev", ACTION=="add|change", GROUP="www-data", MODE="0660"
