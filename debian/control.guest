@@ -1,0 +1,33 @@
+### Commented entries have reasonable defaults.
+### Uncomment to edit them.
+# Source: <source package name; defaults to package name>
+Section: misc
+Priority: optional
+# Homepage: <enter URL here; no default>
+Standards-Version: 3.9.2
+
+Package: sev-guest
+Version: 0.1-6
+Maintainer: Jesse Larrew <jesse.larrew@amd.com>
+# Pre-Depends: <comma-separated list of packages>
+Depends: libssl1.1, uuid-dev
+# Recommends: <comma-separated list of packages>
+# Suggests: <comma-separated list of packages>
+# Provides: <comma-separated list of packages>
+# Replaces: <comma-separated list of packages>
+Architecture: amd64
+# Multi-Arch: <one of: foreign|same|allowed>
+# Copyright: <copyright file; defaults to GPL2>
+#Changelog: debian/changelog
+# Readme: <README.Debian file; defaults to a generic one>
+# Extra-Files: <comma-separated list of additional files for the doc directory>
+# Links: <pair of space-separated paths; First is path symlink points at, second is filename of link>
+Files: sev-guest /usr/bin/
+ sev-guest-get-report /usr/bin/
+ sev-guest-parse-report /usr/bin/
+Description: AMD Confidential Computing guest request tools
+ sev-guest is the front-end program used to issue SEV-SNP guest requests
+ to the platform firmware and parse the results.
+ .
+ These guest requests can be used to retrieve a signed attestation report
+ from the SEV-SNP firmware for use in remote attestation of guest identity.

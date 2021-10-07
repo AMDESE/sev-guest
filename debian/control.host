@@ -1,0 +1,34 @@
+### Commented entries have reasonable defaults.
+### Uncomment to edit them.
+# Source: <source package name; defaults to package name>
+Section: misc
+Priority: optional
+# Homepage: <enter URL here; no default>
+Standards-Version: 3.9.2
+
+Package: sev-host
+Version: 0.1-3
+Maintainer: Jesse Larrew <jesse.larrew@amd.com>
+# Pre-Depends: <comma-separated list of packages>
+Depends: uuid-dev
+# Recommends: <comma-separated list of packages>
+# Suggests: <comma-separated list of packages>
+# Provides: <comma-separated list of packages>
+# Replaces: <comma-separated list of packages>
+Architecture: amd64
+# Multi-Arch: <one of: foreign|same|allowed>
+# Copyright: <copyright file; defaults to GPL2>
+#Changelog: debian/changelog
+# Readme: <README.Debian file; defaults to a generic one>
+# Extra-Files: <comma-separated list of additional files for the doc directory>
+# Links: <pair of space-separated paths; First is path symlink points at, second is filename of link>
+Files: sev-host /usr/bin/
+ sev-host-set-cert-chain /usr/bin/
+Description: AMD Confidential Computing host tools
+ sev-host is the front-end program used to issue IOCTL calls to the CCP/SEV
+ driver.
+ .
+ These calls can be used to store the certificate chain necessary to validate
+ the SEV-SNP guest attestation report for use in remote attestation of guest
+ identity. The certificate chain can be retrieved by the guest using the
+ tools in the sev-guest package.
