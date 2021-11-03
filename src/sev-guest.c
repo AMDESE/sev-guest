@@ -23,6 +23,8 @@ void print_usage(void)
 		"    get-report:   Retrieve the attestation report from \n"
 		"                  the firmware.\n"
 		"    parse-report: Print select fields from the attestation report.\n"
+		"    kdf:          Request a key from the firmware optionally derived\n"
+		"                  from guest key material.\n"
 		"\n");
 }
 
@@ -37,6 +39,7 @@ int main(int argc, char *argv[])
 	} commands[] = {
 		{ "get-report",   PROG_NAME "-get-report"   },
 		{ "parse-report", PROG_NAME "-parse-report" },
+		{ "kdf",          PROG_NAME "-kdf" },
 	};
 
 	if (argc < MIN_NR_ARGS) {

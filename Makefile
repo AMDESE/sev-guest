@@ -15,6 +15,7 @@ AFL_GCC         := $(HOME)/src/git/AFL/afl-gcc
 TARGETS := sev-guest
 TARGETS += sev-guest-get-report
 TARGETS += sev-guest-parse-report
+TARGETS += sev-guest-kdf
 
 TARGETS += sev-host
 TARGETS += sev-host-set-cert-chain
@@ -34,6 +35,9 @@ sev-guest-get-report: $(SOURCE_DIR)/get-report.o $(SOURCE_DIR)/cert-table.o
 	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(OPENSSL_LDFLAGS) $(UUID_LDFLAGS)
 
 sev-guest-parse-report: $(SOURCE_DIR)/parse-report.o $(SOURCE_DIR)/report.o
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^
+
+sev-guest-kdf: $(SOURCE_DIR)/kdf.o
 	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^
 
 sev-host: $(SOURCE_DIR)/sev-host.o
