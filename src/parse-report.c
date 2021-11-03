@@ -17,9 +17,10 @@
 
 union operations {
 	struct {
-		bool print_data  : 1;
+		bool print_data : 1;
 		bool print_help : 1;
-		bool print_tcb : 1;
+		bool print_tcb  : 1;
+		bool print_id   : 1;
 	};
 	uint64_t raw;
 };
@@ -27,7 +28,7 @@ union operations {
 void print_usage(void)
 {
 	fprintf(stderr,
-		"Usage: " PROG_NAME " [-d|--data] [-t|--tcb] report_file\n"
+		"Usage: " PROG_NAME " [-d|--data] [-t|--tcb] [-i|--id] report_file\n"
 		"\n"
 		"  report_file: the attestation report.\n"
 		"\n"
@@ -41,6 +42,9 @@ void print_usage(void)
 		"  -h|--help\n"
 		"    Print this help message.\n"
 		"\n"
+		"  -i|--id\n"
+		"    Print the digest of the identity key.\n"
+		"\n"
 		"  -t|--tcb\n"
 		"    Print the TCB string needed to derive the VCEK.\n"
 		"\n");
@@ -49,11 +53,12 @@ void print_usage(void)
 int parse_options(int argc, char *argv[], union operations *ops, char **report_filename)
 {
 	int rc = EXIT_FAILURE;
-	char *short_options = "dth";
+	char *short_options = "dhit";
 	struct option long_options[] = {
 		{ "data", no_argument, NULL, 'd' },
-		{ "tcb",  no_argument, NULL, 't' },
 		{ "help", no_argument, NULL, 'h' },
+		{ "id",   no_argument, NULL, 'i' },
+		{ "tcb",  no_argument, NULL, 't' },
 		{ 0 },
 	};
 
@@ -74,11 +79,14 @@ int parse_options(int argc, char *argv[], union operations *ops, char **report_f
 		case 'd':
 			ops->print_data = true;
 			break;
-		case 't':
-			ops->print_tcb = true;
-			break;
 		case 'h':
 			ops->print_help = true;
+			break;
+		case 'i':
+			ops->print_id = true;
+			break;
+		case 't':
+			ops->print_tcb = true;
 			break;
 		case ':':
 		case '?':
@@ -88,6 +96,12 @@ int parse_options(int argc, char *argv[], union operations *ops, char **report_f
 			goto out;
 		}
 	} while (1);
+
+	if (optind == argc) {
+		fprintf(stderr, PROG_NAME ": must specify a report file.\n\n");
+		rc = EINVAL;
+		goto out;
+	}
 
 	if (optind < argc) {
 		*report_filename = argv[optind];
@@ -144,10 +158,13 @@ int main(int argc, char *argv[])
 	if (ops.print_data)
 		print_report_data(&report);
 
+	if (ops.print_id)
+		print_id_key_digest(&report);
+
 	if (ops.print_tcb)
 		print_reported_tcb(&report);
 
-	/* If no operations were requested, just print the report */
+	/* If no operations were requested, just print the full report */
 	if (ops.raw == 0)
 		print_report(&report);
 
