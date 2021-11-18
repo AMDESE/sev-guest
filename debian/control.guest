@@ -7,7 +7,7 @@ Priority: optional
 Standards-Version: 3.9.2
 
 Package: sev-guest
-Version: 0.1-6
+Version: 0.2-1
 Maintainer: Jesse Larrew <jesse.larrew@amd.com>
 # Pre-Depends: <comma-separated list of packages>
 Depends: libssl1.1, uuid-dev
@@ -25,6 +25,7 @@ Architecture: amd64
 Files: sev-guest /usr/bin/
  sev-guest-get-report /usr/bin/
  sev-guest-parse-report /usr/bin/
+ sev-guest-kdf /usr/bin
 Description: AMD Confidential Computing guest request tools
  sev-guest is the front-end program used to issue SEV-SNP guest requests
  to the platform firmware and parse the results.
