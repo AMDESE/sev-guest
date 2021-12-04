@@ -1,0 +1,31 @@
+#!/bin/sh
+
+PREREQ=""
+
+prereqs()
+{
+	echo "$PREREQ"
+}
+
+case $1 in
+prereqs)
+	prereqs
+	exit 0
+	;;
+esac
+
+. /usr/share/initramfs-tools/hook-functions
+# Begin real processing below this line
+
+# Add the CCP module for retrieving the attestation report
+manual_add_modules ccp
+copy_file firmware /lib/firmware/amd/sev.fw
+
+# Add the userspace tool to request the attestation report
+copy_exec /usr/bin/sev-guest-get-report
+
+# Add curl to send the report to our attestation server
+copy_exec /usr/bin/curl
+
+# Add the CA root certificate for our attestation server
+copy_file PEM /usr/local/share/ca-certificates/jlarrew-root-ca-cert.crt

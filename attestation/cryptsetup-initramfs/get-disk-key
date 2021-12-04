@@ -1,0 +1,99 @@
+#!/bin/sh
+
+#set -x
+
+ATTESTATION_SERVER="sev-repo.multipass"
+ATTESTATION_IP="192.168.0.51"
+ATTESTATION_SERVER_CA_CERT="/usr/local/share/ca-certificates/jlarrew-root-ca-cert.crt"
+DISK_KEY_URL="https://${ATTESTATION_SERVER}/cgi-bin/disk-key.sh"
+
+stderr()
+{
+	echo "${@}" > /dev/stderr
+}
+
+die()
+{
+	stderr "ERROR: ${@}"
+	exit 1
+}
+
+is_virtual_machine()
+{
+	dmesg | grep "Detected virtualization kvm" > /dev/null
+}
+
+send_report()
+{
+	local report=${1}
+	curl --proto =https --cacert ${ATTESTATION_SERVER_CA_CERT} \
+	     --data-binary @${report} -H "Content-Type: application/octet-stream" \
+	     ${DISK_KEY_URL}
+}
+
+setup_network()
+{
+	local network_online=/tmp/network_online
+
+	if [ -r ${network_online} ]; then
+		return
+	fi
+
+	local dev=$(ip address show | grep -m 1 -o "enp[0-9]s[0-9]")
+
+	if [ -n "${dev}" ]; then
+		ip link set dev ${dev} up
+		dhclient ${dev}
+		touch ${network_online}
+	fi
+
+	echo "${ATTESTATION_IP} ${ATTESTATION_SERVER}" >> /etc/hosts
+}
+
+main()
+{
+	# Change to a safe temporary directory
+	local cwd=$(pwd)
+	local work_dir=attestation
+	[ ! -d ${work_dir} ] && mkdir -p ${work_dir}
+	cd ${work_dir}
+
+	# Ensure that we're running in guest mode
+	if [ ! is_virtual_machine ]; then
+		die "not a virtual machine!"
+	fi
+
+	setup_network
+
+	# Retrieve the SNP attestation report
+	modprobe ccp
+	local report=report.bin
+	sev-guest-get-report ${report} > /dev/null
+	if [ "$?" -ne 0 ]; then
+		die "Failed to retrieve the attestation report!"
+	fi
+
+	# Send the report to the attestation server
+	send_report ${report} > cgi_response
+	if [ ! -s cgi_response ]; then
+		die "Failed to send attestation report!"
+	fi
+
+	if grep "Validation failed" cgi_response; then
+		die "Attestation failed."
+	fi
+
+	stderr "Attestation successful!"
+
+	# Extract the disk key and print it to stdout.
+	# NOTE: the trailing '\n' character must be removed.
+	grep -m 1 -w -o "key=[^ ]*" cgi_response | \
+		sed -e 's/^key=//' | \
+		tr -d '\n'
+
+	# Cleanup
+	cd ${cwd}
+	rm -rf ${work_dir}
+}
+
+main $@

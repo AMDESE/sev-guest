@@ -1,0 +1,2 @@
+# <target name>	<source device>		<key file>	<options>
+luks-rootfs	PARTLABEL=luks-rootfs	none		luks,keyscript=/usr/local/sbin/get-disk-key
