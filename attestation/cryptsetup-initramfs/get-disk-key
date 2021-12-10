@@ -109,7 +109,7 @@ main()
 		die "Failed to send attestation report!"
 	fi
 
-	if grep "Validation failed" cgi_response; then
+	if ! grep "key=" cgi_response > /dev/null; then
 		die "Attestation failed."
 	fi
 
