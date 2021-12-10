@@ -19,7 +19,6 @@ esac
 
 # Add the CCP module for retrieving the attestation report
 manual_add_modules ccp
-copy_file firmware /lib/firmware/amd/sev.fw
 
 # Add the userspace tool to request the attestation report
 copy_exec /usr/bin/sev-guest-get-report
