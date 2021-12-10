@@ -2,6 +2,8 @@
 
 #set -x
 
+export LD_LIBRARY_PATH=/usr/local/lib64
+
 ATTESTATION_SERVER="sev-repo.multipass"
 ATTESTATION_IP="192.168.0.51"
 ATTESTATION_SERVER_CA_CERT="/usr/local/share/ca-certificates/jlarrew-root-ca-cert.crt"
@@ -26,8 +28,16 @@ is_virtual_machine()
 send_report()
 {
 	local report=${1}
+	local pubkey=${2}
+
+	[ -z "${report}" ] && die "${FUNCNAME[0]}: report filename is required."
+	[ -z "${pubkey}" ] && die "${FUNCNAME[0]}: pubkey filename is required."
+
+	local tarball=report.tar.gz
+	tar -zcf ${tarball} ${report} ${pubkey}
+
 	curl --proto =https --cacert ${ATTESTATION_SERVER_CA_CERT} \
-	     --data-binary @${report} -H "Content-Type: application/octet-stream" \
+	     --data-binary @${tarball} -H "Content-Type: application/octet-stream" \
 	     ${DISK_KEY_URL}
 }
 
@@ -50,6 +60,18 @@ setup_network()
 	echo "${ATTESTATION_IP} ${ATTESTATION_SERVER}" >> /etc/hosts
 }
 
+generate_keypair()
+{
+	local keypair=${1}
+	local pubkey=${2}
+
+	[ -z "${keypair}" ] && die "${FUNCNAME[0]}: keypair filename is required."
+	[ -z "${pubkey}"  ] && die "${FUNCNAME[0]}: pubkey filename is required."
+
+	openssl genpkey -quiet -algorithm rsa -out ${keypair}
+	openssl pkey -in ${keypair} -pubout -out ${pubkey}
+}
+
 main()
 {
 	# Change to a safe temporary directory
@@ -63,18 +85,26 @@ main()
 		die "not a virtual machine!"
 	fi
 
-	setup_network
+	if ! setup_network; then
+		die "Network setup failed!"
+	fi
+
+	local keypair=wrap-key.pem
+	local pubkey=wrap-key.pub
+	if ! generate_keypair ${keypair} ${pubkey}; then
+		die "RSA key generation failed!"
+	fi
 
 	# Retrieve the SNP attestation report
 	modprobe ccp
-	local report=report.bin
-	sev-guest-get-report ${report} > /dev/null
+	local report=guest_report.bin
+	sev-guest-get-report -f ${pubkey} ${report} > /dev/null
 	if [ "$?" -ne 0 ]; then
 		die "Failed to retrieve the attestation report!"
 	fi
 
 	# Send the report to the attestation server
-	send_report ${report} > cgi_response
+	send_report ${report} ${pubkey} > cgi_response
 	if [ ! -s cgi_response ]; then
 		die "Failed to send attestation report!"
 	fi
@@ -87,9 +117,14 @@ main()
 
 	# Extract the disk key and print it to stdout.
 	# NOTE: the trailing '\n' character must be removed.
-	grep -m 1 -w -o "key=[^ ]*" cgi_response | \
-		sed -e 's/^key=//' | \
-		tr -d '\n'
+	local wrapped_key=$(grep -m 1 -w -o "key=[^ ]*" cgi_response | \
+				sed -e 's/^key=//' | \
+				tr -d '\n')
+
+	# Decrypt the wrapped disk key and print it to stdout
+	echo -n ${wrapped_key} | \
+		openssl enc -d -base64 -A | \
+		openssl pkeyutl -inkey ${keypair} -decrypt
 
 	# Cleanup
 	cd ${cwd}
