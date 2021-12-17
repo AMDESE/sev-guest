@@ -15,7 +15,7 @@ runcmd:
   - cat ssh_host_rsa_key.pub guest_owner.pub address > pubkeys
   - sev-guest get-report -f pubkeys -x guest_report.bin
 # Uncomment the following line to see an attestation failure.
-#  - dd if=/dev/random of=guest_report.bin bs=4 count=1
+#  - dd if=/dev/random of=guest_report.bin bs=4 count=1 conv=notrunc
   - tar -cvf guest-report.tar *.cert guest_report.bin hostname pubkeys address
   - /usr/local/bin/upload-guest-report.sh guest-report.tar
   - rm -f /usr/local/bin/upload-guest-report.sh
