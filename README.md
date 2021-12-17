@@ -126,9 +126,9 @@ While SEV-SNP provides strong confidentiality and integrity guarantees for data 
 
 Future updates to this repository will include additional examples of how to perform the following tasks:
 
- * Construct the ID Block for the SNP guest,
+ * Construct the ID Block for the SNP guest, (in progress)
  * Verify the ID Block in the attestation report,
- * Shift the attestation flow to the initrd and receive a disk encryption key.
+ * Shift the attestation flow to the initrd and receive a disk encryption key. (Done. See [attestation/cryptsetup-initramfs](attestation/cryptsetup-initramfs))
 
 ---
 
