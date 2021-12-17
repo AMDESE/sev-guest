@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 #
-# guest-attestation.sh
+# ssh-key-exchange.sh
 #
 # Validate a SEV-SNP guest report and install the associated public SSH key.
 

@@ -27,5 +27,6 @@ write_files:
     permissions: "0755"
     content: |
       #!/bin/bash
-      curl --data-binary @${1} -H "Content-Type: application/octet-stream" http://attestation.example.com/cgi-bin/guest-attestation.sh
-
+      server="http://attestation.example.com/cgi-bin/ssh-key-exchange.sh"
+      content="Content-Type: application/octet-stream"
+      curl --data-binary @${1} -H ${content} ${server}
