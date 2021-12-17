@@ -25,7 +25,7 @@ The Qemu and OVMF binaries are now installed in ./usr under the AMDSEV directory
 
 #### SEV-SNP Firmware
 
-The SEV-SNP firmware version needed to run this example can be downloaded [here](). The firmware can be installed as follows:
+The SEV-SNP firmware version needed to run this example can be downloaded [here](../attestation/firmware). The firmware can be installed as follows:
 ```
 mkdir -p /lib/firmware/amd/
 cp sev.fw /lib/firmware/amd/sev.fw
