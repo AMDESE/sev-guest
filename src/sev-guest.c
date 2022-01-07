@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* If we made it here, then the requested command is not supported */
-	rc = ENOTSUP;
+	rc = EOPNOTSUPP;
 	fprintf(stderr, PROG_NAME ": unsupported command.\n");
 	print_usage();
 exit:

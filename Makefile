@@ -6,8 +6,8 @@ OBJECTS    := $(SOURCES:.c=.o)
 
 # Tools
 CC              := gcc
-CFLAGS          := -g -Wall -Werror -O0 -Iinclude
-OPENSSL_LDFLAGS := -lssl -lcrypto
+CFLAGS          := -g -Wall -Werror -O0 -Iinclude -I/usr/local/include/openssl
+OPENSSL_LDFLAGS := -L/usr/local/lib64/ -lssl -lcrypto
 UUID_LDFLAGS    := -luuid
 AFL_GCC         := $(HOME)/src/git/AFL/afl-gcc
 
@@ -19,7 +19,7 @@ TARGETS += sev-guest-kdf
 
 TARGETS += sev-host
 TARGETS += sev-host-set-cert-chain
-
+TARGETS += sev-host-identity
 TARGETS += cert-table-tests
 TARGETS += fuzz-wrapper
 
@@ -45,6 +45,9 @@ sev-host: $(SOURCE_DIR)/sev-host.o
 
 sev-host-set-cert-chain: $(SOURCE_DIR)/set-cert-chain.o $(SOURCE_DIR)/cert-table.o
 	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(UUID_LDFLAGS)
+
+sev-host-identity: $(SOURCE_DIR)/identity.o $(SOURCE_DIR)/id-block.o $(SOURCE_DIR)/sev-ecdsa.o
+	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(OPENSSL_LDFLAGS)
 
 cert-table-tests: $(TESTS_DIR)/cert-table-tests.o $(SOURCE_DIR)/cert-table.o
 	$(CC) $(CFLAGS) -DPROG_NAME=$@ -o $@ $^ $(UUID_LDFLAGS)
