@@ -16,7 +16,7 @@
 
 static int validate_evp_key(EVP_PKEY *key)
 {
-	int rc = EXIT_FAILURE;
+	int rc = -EXIT_FAILURE;
 	char curve[CURVE_NAME_SIZE] = {'\0'};
 
 	if (!key) {
@@ -66,7 +66,7 @@ static bool is_curve_valid(enum ecdsa_curve curve)
 
 static int sev_ecdsa_pubkey_set_curve(struct sev_ecdsa_pubkey *pubkey, enum ecdsa_curve curve)
 {
-	int rc = EXIT_FAILURE;
+	int rc = -EXIT_FAILURE;
 
 	if (!pubkey || !is_curve_valid(curve)) {
 		rc = EINVAL;
@@ -94,7 +94,7 @@ static void reverse_bytes(uint8_t *buffer, size_t size)
 static int sev_ecdsa_pubkey_set_point(struct sev_ecdsa_pubkey *pubkey,
 				      const union secg_ec_point_384 *point)
 {
-	int rc = EXIT_FAILURE;
+	int rc = -EXIT_FAILURE;
 
 	if (!pubkey || !point) {
 		rc = EINVAL;
@@ -119,7 +119,7 @@ out:
 
 int sev_ecdsa_pubkey_init(struct sev_ecdsa_pubkey *pubkey, EVP_PKEY *evp_key)
 {
-	int rc = EXIT_FAILURE;
+	int rc = -EXIT_FAILURE;
 	struct sev_ecdsa_pubkey key;
 	size_t size = 0;
 	union secg_ec_point_384 q;

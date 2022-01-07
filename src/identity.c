@@ -86,7 +86,7 @@ int hex_string_to_bytes(const char *src, size_t src_size, uint8_t *dst, size_t d
 #define HEX_PREFIX		"0x"
 #define NIBBLES_PER_BYTE	(2)
 
-	int rc = EXIT_FAILURE;
+	int rc = -EXIT_FAILURE;
 	const char *hex = src;
 	size_t hex_size = src_size;
 
@@ -137,7 +137,7 @@ out:
 
 int parse_options(int argc, char *argv[], struct options *options)
 {
-	int rc = EXIT_FAILURE;
+	int rc = -EXIT_FAILURE;
 	char *short_options = "a:bd:f:hi:m:p:s:";
 	struct option long_options[] = {
 		{ "auth-info", required_argument, NULL, 'a' },
@@ -301,7 +301,7 @@ out:
 
 int read_key_file(const char *filename, EVP_PKEY **key)
 {
-	int rc = EXIT_FAILURE;
+	int rc = -EXIT_FAILURE;
 	FILE *file = NULL;
 	OSSL_DECODER_CTX *dctx = NULL;
 
@@ -347,7 +347,7 @@ out:
 
 int write_buffer(void *buffer, size_t size, const char *filename, bool do_base64)
 {
-	int rc = EXIT_FAILURE;
+	int rc = -EXIT_FAILURE;
 	BIO *bio = NULL, *base64 = NULL, *file = NULL;
 
 	if (!buffer || size == 0 || !filename) {
@@ -393,7 +393,7 @@ out:
 
 int main(int argc, char *argv[])
 {
-	int rc = EXIT_FAILURE;
+	int rc = -EXIT_FAILURE;
 	struct options options;
 	EVP_PKEY *id_key = NULL, *author_key = NULL;
 	struct id_auth_info info;
