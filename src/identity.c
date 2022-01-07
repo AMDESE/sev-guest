@@ -100,11 +100,7 @@ int hex_string_to_bytes(const char *src, size_t src_size, uint8_t *dst, size_t d
 		hex_size -= sizeof(HEX_PREFIX);
 	}
 
-#if 0
-	for (int i = hex_size - NIBBLES_PER_BYTE, j = 0; i >= 0; i -= NIBBLES_PER_BYTE) {
-#else
 	for (int i = 0, j = 0; i < hex_size; i += NIBBLES_PER_BYTE) {
-#endif
 		char hex_byte[NIBBLES_PER_BYTE + 1] = {'\0'};
 		char *end = NULL;
 		long byte = 0;
@@ -411,12 +407,7 @@ int main(int argc, char *argv[])
 		print_usage();
 		goto exit;
 	}
-#if 0
-	for (size_t i = 0; i < sizeof(options.id.ld); i++) {
-		printf("%02x:", options.id.ld[i]);
-	}
-	putchar('\n');
-#endif
+
 	/* Read the ID key file */
 	rc = read_key_file(options.key_file, &id_key);
 	if (rc != EXIT_SUCCESS) {

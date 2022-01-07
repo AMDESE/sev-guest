@@ -108,10 +108,10 @@ static int sev_ecdsa_pubkey_set_point(struct sev_ecdsa_pubkey *pubkey,
 
 	memcpy(pubkey->qx, point->point.x, sizeof(point->point.x));
 	memcpy(pubkey->qy, point->point.y, sizeof(point->point.y));
-#if 1
+
 	reverse_bytes(pubkey->qx, sizeof(point->point.x));
 	reverse_bytes(pubkey->qy, sizeof(point->point.y));
-#endif
+
 	rc = EXIT_SUCCESS;
 out:
 	return rc;
@@ -274,15 +274,6 @@ int sev_ecdsa_sign(const void *msg, size_t msg_size, EVP_PKEY *key, union sev_ec
 		goto out_md_ctx;
 	}
 
-#if 0
-	if (sig_size != sizeof(sig)) {
-		fprintf(stderr, "%s: signature requires %lu bytes! (%lu allocated)\n",
-			__func__, sig_size, sizeof(sig));
-		rc = ENOBUFS;
-		goto out_md_ctx;
-	}
-#endif
-
 	ossl_sig = (uint8_t *) OPENSSL_zalloc(expected_size);
 	if (!sig) {
 		rc = ENOMEM;
@@ -292,15 +283,9 @@ int sev_ecdsa_sign(const void *msg, size_t msg_size, EVP_PKEY *key, union sev_ec
 	sig_size = expected_size;
 
 	if (!EVP_DigestSign(md_ctx, ossl_sig, &sig_size, msg, msg_size)) {
-		char *error_msg = NULL;
-#if 0
 		ERR_print_errors_fp(stderr);
-#else
-		error_msg = ERR_error_string(ERR_get_error(), NULL);
-		fprintf(stderr, "%s: %s\n", __func__, error_msg);
-		fprintf(stderr, "sig_size = %lu (was %lu)\n", sig_size, sizeof(sig));
+		fprintf(stderr, "sig_size = %lu (was %lu)\n", sig_size, expected_size);
 		fprintf(stderr, "DRBG status: %s\n", RAND_status() ? "good" : "bad");
-#endif
 		rc = -EXIT_FAILURE;
 		goto out_sig;
 	}
