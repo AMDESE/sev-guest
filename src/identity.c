@@ -349,40 +349,46 @@ out:
 	return rc;
 }
 
-int write_base64(void *buffer, size_t size, const char *filename)
+int write_buffer(void *buffer, size_t size, const char *filename, bool do_base64)
 {
 	int rc = EXIT_FAILURE;
-	BIO *bio = NULL, *base64 = NULL;
+	BIO *bio = NULL, *base64 = NULL, *file = NULL;
 
 	if (!buffer || size == 0 || !filename) {
 		rc = EINVAL;
 		goto out;
 	}
 
-	base64 = BIO_new(BIO_f_base64());
-	if (!base64) {
-		rc = ENOMEM;
+	file = BIO_new_file(filename, "w");
+	if (!file) {
+		rc = EIO;
 		goto out;
 	}
 
-	BIO_set_flags(base64, BIO_FLAGS_BASE64_NO_NL);
+	bio = file;
 
-	bio = BIO_new_file(filename, "w");
-	if (!bio) {
-		rc = EIO;
-		goto out_bio;
+	if (do_base64) {
+		base64 = BIO_new(BIO_f_base64());
+		if (!base64) {
+			rc = ENOMEM;
+			goto out_bio;
+		}
+
+		BIO_set_flags(base64, BIO_FLAGS_BASE64_NO_NL);
+		BIO_push(base64, file);
+		bio = base64;
 	}
 
-	BIO_push(base64, bio);
-	BIO_write(base64, buffer, size);
-	BIO_flush(base64);
+	BIO_write(bio, buffer, size);
+	BIO_flush(bio);
 
 	rc = EXIT_SUCCESS;
 
 out_bio:
-	if (base64) {
-		BIO_free_all(base64);
+	if (bio) {
+		BIO_free_all(bio);
 		base64 = NULL;
+		file = NULL;
 		bio = NULL;
 	}
 out:
@@ -438,17 +444,19 @@ int main(int argc, char *argv[])
 	}
 
 	/* Write the output files */
-	rc = write_base64(&options.id, sizeof(options.id), options.id_block_file);
+	rc = write_buffer(&options.id, sizeof(options.id),
+			  options.id_block_file, options.do_base64);
 	if (rc != EXIT_SUCCESS) {
 		errno = rc;
-		perror("write_base64");
+		perror("write_buffer");
 		goto exit_keys;
 	}
 
-	rc = write_base64(&info, sizeof(info), options.auth_info_file);
+	rc = write_buffer(&info, sizeof(info), options.auth_info_file,
+			  options.do_base64);
 	if (rc != EXIT_SUCCESS) {
 		errno = rc;
-		perror("write_base64");
+		perror("write_buffer");
 		goto exit_keys;
 	}
 
