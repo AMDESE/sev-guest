@@ -18,6 +18,8 @@
 
 #define NR_ARGS_REQUIRED	(2)
 
+#define DEFAULT_POLICY	(0x300000U)
+
 struct options {
 	struct id_block id;
 	char *key_file;
@@ -73,12 +75,13 @@ void print_usage(void)
 		"  -p|--policy policy\n"
 		"    Specifies the policy bits of the guest as a hex string. 'policy' must\n"
 		"    match the policy specified by the hypervisor during guest launch.\n"
-		"    Default is 0xXXXXXXXX.\n"
+		"    Default is %#0x.\n"
 		"\n"
 		"  -s|--svn svn\n"
 		"    Specifies the Security Version Number (SVN) of the guest image.\n"
 		"    Default is 0.\n"
-		"\n");
+		"\n",
+		DEFAULT_POLICY);
 }
 
 int hex_string_to_bytes(const char *src, size_t src_size, uint8_t *dst, size_t dst_size)
@@ -401,6 +404,10 @@ int main(int argc, char *argv[])
 	memset(&options, 0, sizeof(options));
 	id_block_init(&options.id);
 
+	/* Set defaults */
+	options.id.policy = DEFAULT_POLICY;
+
+	/* Parse user input */
 	rc = parse_options(argc, argv, &options);
 	if (rc != EXIT_SUCCESS || options.do_help == true) {
 		putchar('\n');
