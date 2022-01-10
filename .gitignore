@@ -1,5 +1,7 @@
-sev-guest*
-sev-host*
+sev-guest-*
+sev-guest
+sev-host-*
+sev-host
 cert-table-tests
 src/*.o
 tests/*.o
