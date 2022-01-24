@@ -28,6 +28,7 @@ struct options {
 	char *author_key_file;
 	bool do_help;
 	bool do_base64;
+	bool do_fingerprint;
 };
 
 void print_usage(void)
@@ -38,9 +39,14 @@ void print_usage(void)
 		"       [-m|--image-id id] [-p|--policy policy_bits] [-s|--svn svn]\n"
 		"       id_key [author_key]\n"
 		"\n"
-		"Construct an ID block with the given metadata. The ID block will include the\n"
-		"public portion of the key specified in 'id_key' and will be signed using the\n"
-		"private portion of the same key.\n"
+		"       " PROG_NAME " -g|--fingerprint id_key [author_key]\n"
+		"\n"
+		"The first form constructs an ID block with the given metadata. The ID block\n"
+		"will include the public portion of the key specified in 'id_key' and will be\n"
+		"signed using the private portion of the same key.\n"
+		"\n"
+		"The second form calcualates the SHA-384 fingerprint of the given public key\n"
+		"files after converting them to the SEV public key format.\n"
 		"\n"
 		"options:\n"
 		"  -a|--auth-info file\n"
@@ -60,6 +66,10 @@ void print_usage(void)
 		"  -f|--famiy-id id\n"
 		"    Specifies an optional Family ID of the guest image.\n"
 		"    Default is 0.\n"
+		"\n"
+		"  -g|--fingerprint\n"
+		"    Only calculate the SHA-384 fingerprint of the input key files.\n"
+		"    Default is off.\n"
 		"\n"
 		"  -h|--help\n"
 		"    Print this help message.\n"
@@ -141,17 +151,18 @@ out:
 int parse_options(int argc, char *argv[], struct options *options)
 {
 	int rc = -EXIT_FAILURE;
-	char *short_options = "a:bd:f:hi:m:p:s:";
+	char *short_options = "a:bd:f:ghi:m:p:s:";
 	struct option long_options[] = {
-		{ "auth-info", required_argument, NULL, 'a' },
-		{ "base64",    no_argument,       NULL, 'b' },
-		{ "digest",    required_argument, NULL, 'd' },
-		{ "family-id", required_argument, NULL, 'f' },
-		{ "help",      no_argument,       NULL, 'h' },
-		{ "id-block",  required_argument, NULL, 'i' },
-		{ "image-id",  required_argument, NULL, 'm' },
-		{ "policy",    required_argument, NULL, 'p' },
-		{ "svn",       required_argument, NULL, 's' },
+		{ "auth-info",   required_argument, NULL, 'a' },
+		{ "base64",      no_argument,       NULL, 'b' },
+		{ "digest",      required_argument, NULL, 'd' },
+		{ "family-id",   required_argument, NULL, 'f' },
+		{ "fingerprint", no_argument,       NULL, 'g' },
+		{ "help",        no_argument,       NULL, 'h' },
+		{ "id-block",    required_argument, NULL, 'i' },
+		{ "image-id",    required_argument, NULL, 'm' },
+		{ "policy",      required_argument, NULL, 'p' },
+		{ "svn",         required_argument, NULL, 's' },
 		{0},
 	};
 
@@ -193,6 +204,9 @@ int parse_options(int argc, char *argv[], struct options *options)
 				goto out;
 			}
 			memcpy(options->id.family_id, optarg, length);
+			break;
+		case 'g':
+			options->do_fingerprint = true;
 			break;
 		case 'h':
 			options->do_help = true;
@@ -283,14 +297,14 @@ int parse_options(int argc, char *argv[], struct options *options)
 		goto out;
 	}
 
-	if (!options->id_block_file) {
+	if (!options->id_block_file && !options->do_fingerprint) {
 		fprintf(stderr, "id block file is required!\n"
 				"See -i for details.\n");
 		rc = EINVAL;
 		goto out;
 	}
 
-	if (!options->auth_info_file) {
+	if (!options->auth_info_file && !options->do_fingerprint) {
 		fprintf(stderr, "authentication information file is required!\n"
 				"See -a for details.\n");
 		rc = EINVAL;
@@ -344,6 +358,54 @@ out_ctx:
 		OSSL_DECODER_CTX_free(dctx);
 		dctx = NULL;
 	}
+out:
+	return rc;
+}
+
+void print_byte_array(const char *label, const uint8_t *array, size_t size)
+{
+	if (label)
+		printf("%s: ", label);
+
+	if (!array) {
+		printf("(null)\n");
+		return;
+	}
+
+	for (size_t i = 0; i < size; i++) {
+		printf("%02x", array[i]);
+	}
+
+	putchar('\n');
+}
+
+int print_pubkey_fingerprint(EVP_PKEY *key, const char *label)
+{
+	int rc = -EXIT_FAILURE;
+	struct sev_ecdsa_pubkey sev_pubkey;
+	uint8_t md[EVP_MAX_MD_SIZE] = {0};
+	size_t size = sizeof(md);
+
+	if (!key) {
+		rc = EINVAL;
+		goto out;
+	}
+
+	/* Convert the key to SEV format */
+	rc = sev_ecdsa_pubkey_init(&sev_pubkey, key);
+	if (rc != EXIT_SUCCESS)
+		goto out;
+
+	/* Hash the SEV public key */
+	if (!EVP_Q_digest(NULL, "sha384", NULL, &sev_pubkey, sizeof(sev_pubkey), md, &size)) {
+		rc = -EXIT_FAILURE;
+		goto out;
+	}
+
+	/* Print the hash bytes */
+	print_byte_array(label, md, size);
+
+	rc = EXIT_SUCCESS;
 out:
 	return rc;
 }
@@ -431,6 +493,22 @@ int main(int argc, char *argv[])
 			perror("read_key_file");
 			goto exit_keys;
 		}
+	}
+
+	/* Print the pubkey fingerprints, if requested */
+	if (options.do_fingerprint) {
+		rc = print_pubkey_fingerprint(id_key, "Identity Key");
+		if (rc != EXIT_SUCCESS)
+			goto exit_keys;
+
+		if (author_key) {
+			rc = print_pubkey_fingerprint(author_key, "Author Key");
+			if (rc != EXIT_SUCCESS)
+				goto exit_keys;
+		}
+
+		/* Stop processing here */
+		goto exit_keys;
 	}
 
 	/* Construct the ID Authentication Information structure */
