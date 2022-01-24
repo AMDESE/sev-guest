@@ -151,6 +151,8 @@ main()
 	popd > /dev/null
 	rm -rf ${work_dir}
 
+	log "Sending (encrypted) disk key."
+
 	# Send the required CGI response message
 	cgi_response "Attestation Response" "Result" "key=${wrapped_key}"
 	exit 0
