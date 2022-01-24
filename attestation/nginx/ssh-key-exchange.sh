@@ -29,10 +29,25 @@ cgi_response()
 	echo "</BODY></HTML>";
 }
 
+is_cert_chain_valid()
+{
+	local work_dir=${1}
+	${SEV_TOOL} --ofolder ${work_dir} --validate_cert_chain_vcek | \
+		grep "Command Successful" > /dev/null
+}
+
+is_report_valid()
+{
+	local work_dir=${1}
+	${SEV_TOOL} --ofolder ${work_dir} --validate_guest_report | \
+		grep "Command Successful" > /dev/null
+}
+
 validate_pubkey()
 {
 	local dir=$1
-	local report_hash=$(sev-guest parse-report -d ${dir}/guest_report.bin | cut -d ' ' -f3)
+	local report_hash=$(sev-guest parse-report -d ${dir}/guest_report.bin | \
+			    sed -e '1d' -e '2{N}' -e 's/[ \n]*//g')
 	local pubkey_hash=$(sha512sum ${dir}/pubkeys | cut -d ' ' -f1)
 
 	# Rename the .cert files to .pem
@@ -42,9 +57,7 @@ validate_pubkey()
 
 	# Check that the report hash matches the pubkey and that the
 	# guest report and it's cert chain validate correctly
-	[ "${report_hash}" == "${pubkey_hash}" ] && \
-	${SEV_TOOL} --ofolder ${dir} --validate_cert_chain_vcek && \
-	${SEV_TOOL} --ofolder ${dir} --validate_guest_report
+	is_report_valid ${dir} && is_cert_chain_valid ${dir} && [ "${report_hash}" == "${pubkey_hash}" ]
 }
 
 update_known_hosts()
