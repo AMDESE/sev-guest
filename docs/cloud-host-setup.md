@@ -4,22 +4,22 @@
 Currently, the simplest way to install a SEV-SNP environment with the proper kernel, qemu, and OVMF support is to use the AMDSEV repo.
 
 1. Clone the [sev-snp-devel](https://github.com/AMDESE/AMDSEV/tree/sev-snp-devel) branch of the AMDSEV repo:
-    ```
-    git clone --single-branch -b sev-snp-devel https://github.com/AMDESE/AMDSEV.git
-    cd AMDSEV
-    ```
+```
+git clone --single-branch -b sev-snp-devel https://github.com/AMDESE/AMDSEV.git
+cd AMDSEV
+```
 2. Update the kernel branch name to the (experimental) sev-snp-part2-v6 branch:
-    ```
-    sed -i -e 's/sev-snp-part2-v5/sev-snp-part2-v6/' stable-commits
-    ```
+```
+sed -i -e 's/sev-snp-part2-v5/sev-snp-part2-v6/' stable-commits
+```
 3. Run the build.sh script:
-    ```
-    ./build.sh
-    ```
+```
+./build.sh
+```
 4. Install the resulting debian packages:
-    ```
-    sudo apt install *.deb
-    ```
+```
+sudo apt install *.deb
+```
 
 The Qemu and OVMF binaries are now installed in ./usr under the AMDSEV directory.
 
@@ -28,7 +28,7 @@ The Qemu and OVMF binaries are now installed in ./usr under the AMDSEV directory
 The SEV-SNP firmware version needed to run this example can be downloaded [here](../attestation/firmware). The firmware can be installed as follows:
 ```
 mkdir -p /lib/firmware/amd/
-cp sev.fw /lib/firmware/amd/sev.fw
+cp attestation/firmware/sev.fw /lib/firmware/amd/sev.fw
 ```
 
 #### sev-host tool (optional)
