@@ -7,7 +7,7 @@ Priority: optional
 Standards-Version: 3.9.2
 
 Package: sev-host
-Version: 0.1-3
+Version: 0.2-1
 Maintainer: Jesse Larrew <jesse.larrew@amd.com>
 # Pre-Depends: <comma-separated list of packages>
 Depends: uuid-dev
@@ -24,6 +24,7 @@ Architecture: amd64
 # Links: <pair of space-separated paths; First is path symlink points at, second is filename of link>
 Files: sev-host /usr/bin/
  sev-host-set-cert-chain /usr/bin/
+ sev-host-identity /usr/bin/
 Description: AMD Confidential Computing host tools
  sev-host is the front-end program used to issue IOCTL calls to the CCP/SEV
  driver.
