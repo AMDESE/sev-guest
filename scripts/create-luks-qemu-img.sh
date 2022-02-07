@@ -252,6 +252,12 @@ main()
 	highlight "Updating etc/fstab..."
 	add_fstab_entry ${luks_mnt}/etc/fstab "LABEL=boot /boot ext4 defaults 0 1"
 
+	# Install GRUB
+	echo
+	highlight "Installing GRUB..."
+	mount ${efi_partition} ${luks_mnt}/boot/efi
+	run_chroot_cmd ${luks_mnt} grub-install --target=x86_64-efi ${new_img_nbd}
+
 	# Install any packages
 	if [ "${#packages[@]}" -gt 0 ]; then
 		echo
@@ -287,16 +293,12 @@ main()
 		run_chroot_cmd ${luks_mnt} update-initramfs -u -k all
 	fi
 
-	# Install GRUB
-	echo
-	highlight "Installing GRUB..."
-	mount ${efi_partition} ${luks_mnt}/boot/efi
-	run_chroot_cmd ${luks_mnt} grub-install --target=x86_64-efi ${new_img_nbd}
-
 	# Update the GRUB menu
 	#
 	# Disabling os-prober ensures that only the kernels in /boot are added
 	# to the menu, and OSes on other disks (like the host OS) are ignored.
+	echo
+	highlight "Updating GRUB Menu..."
 	cp ${luks_mnt}/etc/default/grub ${luks_mnt}/etc/default/grub.orig
 	echo "GRUB_DISABLE_OS_PROBER=true" >> ${luks_mnt}/etc/default/grub
 	run_chroot_cmd ${luks_mnt} update-grub
