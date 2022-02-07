@@ -65,13 +65,15 @@ die()
 print_usage()
 {
 	stderr
-	stderr "Usage: $(basename ${0}) ref-image [image-name] [image-size]"
+	stderr "Usage: $(basename ${0}) ref-image [image-name] [image-size] [packages...]"
 	stderr
 	stderr "Create a LUKS-encrypted QCOW2 image from an unencrypted reference QCOW2 image."
 	stderr
 	stderr "If image-name and/or image-size are not specified, the output file"
 	stderr "name will be ${DEFAULT_IMG_NAME} and the size will be ${DEFAULT_IMG_SIZE}."
 	stderr
+	stderr "If additional debian packages are listed on the command line, they will be"
+	stderr "installed into the encrypted guest image."
 }
 
 create_disk_partitions()
@@ -163,8 +165,12 @@ main()
 	local new_img=${2:-${DEFAULT_IMG_NAME}}
 	local size=${3:-${DEFAULT_IMG_SIZE}}
 
+	shift 3
+
+	local -a packages=( ${@} )
+
 	# Check arguments
-	if [ "${#@}" -gt 3 -o -z "${ref_img}" ]; then
+	if [ -z "${ref_img}" ]; then
 		print_usage
 		exit 1
 	fi
@@ -172,7 +178,7 @@ main()
 	# If we are not root, re-run with root privileges.
 	if [ "${UID}" -ne 0 ]; then
 		highlight "root priviliges are required. Re-running under sudo..."
-		exec sudo ${0} ${@}
+		exec sudo ${0} ${ref_img} ${new_img} ${size} ${packages[@]}
 	fi
 
 	[ ! -r "${ref_img}" ] && die "${ref_img} is not readable!"
@@ -245,6 +251,29 @@ main()
 	echo
 	highlight "Updating etc/fstab..."
 	add_fstab_entry ${luks_mnt}/etc/fstab "LABEL=boot /boot ext4 defaults 0 1"
+
+	# Install any packages
+	if [ "${#packages[@]}" -gt 0 ]; then
+		echo
+		highlight "Installing ${#packages[@]} packages..."
+
+		# bugs.launchpad.net/ubuntu/+source/livecd-rootfs/+bug/1870189
+		#
+		# Setting GRUB_FORCE_PARTUUID causes grub to boot without
+		# an initrd. If this file is present, just remove it.
+		rm -f ${luks_mnt}/etc/default/grub.d/40-force-partuuid.cfg
+
+		for pkg in ${packages[@]}; do
+			if [ -r ${pkg} ]; then
+				cp ${pkg} ${luks_mnt}/tmp
+				pkg="/tmp/$(basename ${pkg})"
+			fi
+
+			run_chroot_cmd ${luks_mnt} apt install ${pkg}
+
+			[ -f ${luks_mnt}/${pkg} ] && rm -f ${luks_mnt}/${pkg}
+		done
+	fi
 
 	# Add a crypttab entry for the LUKS partition
 	echo
