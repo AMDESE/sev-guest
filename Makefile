@@ -24,7 +24,7 @@ TARGETS += cert-table-tests
 TARGETS += fuzz-wrapper
 
 # Rules
-.PHONY: all clean cscope fuzz
+.PHONY: all cscope fuzz guest-deb host-deb debs clean
 
 all: $(TARGETS)
 
@@ -61,6 +61,14 @@ cscope:
 
 fuzz:
 	$(MAKE) CC=$(AFL_GCC) AFL_HARDEN=1
+
+guest-deb: all debian/control.guest
+	equivs-build debian/control.guest
+
+host-deb: all debian/control.host
+	equivs-build debian/control.host
+
+debs: guest-deb host-deb
 
 clean:
 	$(RM) $(TARGETS) $(OBJECTS) cscope.*
