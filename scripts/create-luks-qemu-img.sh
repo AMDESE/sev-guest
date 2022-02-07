@@ -150,11 +150,19 @@ run_chroot_cmd()
 	mount -t sysfs sysfs ${new_root}/sys
 	mount -t tmpfs tmpfs ${new_root}/run
 
+	# Bind mount /etc/resolv.conf to enable DNS within the chroot jail
+	local resolv=$(realpath -m ${new_root}/etc/resolv.conf)
+	local parent=$(dirname ${resolv})
+	[ ! -d "${parent}" ] && mkdir -p ${parent}
+	touch ${resolv}
+	mount --bind /etc/resolv.conf ${resolv}
+
 	chroot "${new_root}" \
 		/usr/bin/env -i HOME=/root TERM="${TERM}" PATH=/usr/bin:/usr/sbin \
 		${@}
 
 	# Unmount virtual filesystems
+	umount ${resolv}
 	umount ${new_root}/dev{/pts,}
 	umount ${new_root}/{sys,proc,run}
 }
