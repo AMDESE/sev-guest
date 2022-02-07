@@ -260,6 +260,19 @@ main()
 	highlight "Updating etc/fstab..."
 	add_fstab_entry ${luks_mnt}/etc/fstab "LABEL=boot /boot ext4 defaults 0 1"
 
+	# Add a crypttab entry for the LUKS partition
+	echo
+	highlight "Updating etc/crypttab..."
+
+	. ${luks_mnt}/etc/os-release
+
+	if [ "${ID}" == "ubuntu" -a -w ${luks_mnt}/etc/crypttab ]; then
+		local uuid=$(blkid -s UUID -o value ${luks_partition})
+		local entry="${LUKS_DM_NAME} UUID=${uuid} none luks"
+		echo "${entry}" >> ${luks_mnt}/etc/crypttab
+		run_chroot_cmd ${luks_mnt} update-initramfs -u -k all
+	fi
+
 	# Install GRUB
 	echo
 	highlight "Installing GRUB..."
@@ -289,15 +302,21 @@ main()
 		done
 	fi
 
-	# Add a crypttab entry for the LUKS partition
+	# Update the crypttab entry for the LUKS partition
 	echo
-	highlight "Updating etc/crypttab..."
-
-	. ${luks_mnt}/etc/os-release
+	highlight "Adding key script to etc/crypttab..."
 
 	if [ "${ID}" == "ubuntu" -a -w ${luks_mnt}/etc/crypttab ]; then
-		local uuid=$(blkid -s UUID -o value ${luks_partition})
-		echo "${LUKS_DM_NAME} UUID=${uuid} none luks" >> ${luks_mnt}/etc/crypttab
+		# Add the scripts to retrieve the disk encryption key
+		# via remote attestation
+		cp attestation/cryptsetup-initramfs/attestation-hook.sh \
+			${luks_mnt}/etc/initramfs-tools/hooks/
+		cp attestation/cryptsetup-initramfs/get-disk-key \
+			${luks_mnt}/usr/local/sbin
+
+		local keyscript="/usr/local/sbin/get-disk-key"
+		sed -i -e "s/luks$/luks,keyscript=${keyscript//\//\\\/}/" \
+			${luks_mnt}/etc/crypttab
 		run_chroot_cmd ${luks_mnt} update-initramfs -u -k all
 	fi
 
