@@ -44,7 +44,7 @@ cleanup()
 	[ -d ${LUKS_MNT} ] && umount -R ${LUKS_MNT} && rmdir ${LUKS_MNT}
 
 	# Close the LUKS device
-	[ -f /dev/mapper/${LUKS_DM_NAME} ] && cryptsetup close ${LUKS_DM_NAME}
+	[ -a /dev/mapper/${LUKS_DM_NAME} ] && cryptsetup close ${LUKS_DM_NAME}
 
 	# Disconnect the nbd devices
 	qemu-nbd -d ${LUKS_NBD}
