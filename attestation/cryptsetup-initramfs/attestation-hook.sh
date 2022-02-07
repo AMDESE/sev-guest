@@ -27,8 +27,8 @@ copy_exec /usr/bin/sev-guest-get-report
 copy_exec /usr/bin/tar
 copy_exec /usr/bin/curl
 
-# Add the CA root certificate for our attestation server
-copy_file PEM /usr/local/share/ca-certificates/jlarrew-root-ca-cert.crt
+# If the attestation server uses SSL, add the CA root certificate
+#copy_file PEM /usr/local/share/ca-certificates/your-root-ca-cert.crt
 
 # Add the local build of openssl3
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/
