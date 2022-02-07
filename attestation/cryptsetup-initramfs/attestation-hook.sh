@@ -20,9 +20,6 @@ esac
 # Add the CCP module for retrieving the attestation report
 manual_add_modules ccp
 
-# Add the userspace tool to request the attestation report
-copy_exec /usr/bin/sev-guest-get-report
-
 # Add tar and curl to send the report to our attestation server
 copy_exec /usr/bin/tar
 copy_exec /usr/bin/curl
@@ -33,3 +30,6 @@ copy_exec /usr/bin/curl
 # Add the local build of openssl3
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib64/
 copy_exec /usr/local/bin/openssl
+
+# Add the userspace tool to request the attestation report
+copy_exec /usr/bin/sev-guest-get-report
