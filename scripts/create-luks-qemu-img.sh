@@ -82,7 +82,7 @@ create_disk_partitions()
 
 	sgdisk --zap-all ${dev}
 
-	sgdisk --new=${BOOT_PART_NR}:0:+100M ${dev}	# /boot
+	sgdisk --new=${BOOT_PART_NR}:0:+512M ${dev}	# /boot
 	sgdisk --typecode=${BOOT_PART_NR}:8301 ${dev}	# type = Linux reserved
 	sgdisk --change-name=${BOOT_PART_NAME}:${BOOT_PART_NAME} ${dev}
 
