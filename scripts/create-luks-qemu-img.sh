@@ -180,9 +180,11 @@ main()
 	local new_img=${2:-${DEFAULT_IMG_NAME}}
 	local size=${3:-${DEFAULT_IMG_SIZE}}
 
-	shift 3
-
-	local -a packages=( ${@} )
+	# If we are not root, re-run with root privileges.
+	if [ "${UID}" -ne 0 ]; then
+		highlight "root priviliges are required. Re-running under sudo..."
+		exec sudo ${0} $@
+	fi
 
 	# Check arguments
 	if [ -z "${ref_img}" ]; then
@@ -190,13 +192,19 @@ main()
 		exit 1
 	fi
 
-	# If we are not root, re-run with root privileges.
-	if [ "${UID}" -ne 0 ]; then
-		highlight "root priviliges are required. Re-running under sudo..."
-		exec sudo ${0} ${ref_img} ${new_img} ${size} ${packages[@]}
+	[ ! -r "${ref_img}" ] && die "${ref_img} is not readable!"
+
+	# Shifting the input arguments by more than the actual number
+	# of arguments causes 'shift' to return an error code and
+	# abort script execution. Take care to shift by the proper
+	# number of arguments here.
+	if [ "$#" -lt 3 ]; then
+		shift $#
+	else
+		shift 3
 	fi
 
-	[ ! -r "${ref_img}" ] && die "${ref_img} is not readable!"
+	local packages=( ${@} )
 
 	# Create the base qcow2 image
 	qemu-img create -f qcow2 ${new_img} ${size}
