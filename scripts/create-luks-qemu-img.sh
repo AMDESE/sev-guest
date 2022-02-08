@@ -74,10 +74,10 @@ print_usage()
 	stderr
 	stderr "Usage: $(basename ${0}) ref-image [image-name] [image-size] [packages...]"
 	stderr
-	stderr "Create a LUKS-encrypted QCOW2 image from an unencrypted reference QCOW2 image."
+	stderr "Create a LUKS-encrypted QCOW2 image from an unencrypted reference image."
 	stderr
-	stderr "If image-name and/or image-size are not specified, the output file"
-	stderr "name will be ${DEFAULT_IMG_NAME} and the size will be ${DEFAULT_IMG_SIZE}."
+	stderr "If not specified, the output file name will be \"${DEFAULT_IMG_NAME}\""
+	stderr "and the size will be ${DEFAULT_IMG_SIZE}."
 	stderr
 	stderr "If additional debian packages are listed on the command line, they will be"
 	stderr "installed into the encrypted guest image."
