@@ -3,5 +3,7 @@ sev-guest
 sev-host-*
 sev-host
 cert-table-tests
+fuzz-wrapper
 src/*.o
 tests/*.o
+*.deb

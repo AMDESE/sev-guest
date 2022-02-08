@@ -1,0 +1,174 @@
+### Commented entries have reasonable defaults.
+### Uncomment to edit them.
+# Source: <source package name; defaults to package name>
+Section: misc
+Priority: optional
+Homepage: https://www.github.com/openssl/openssl
+Standards-Version: 3.9.2
+
+Package: openssl3
+Version: 3.0.1
+Maintainer: Jesse Larrew <jesse.larrew@amd.com>
+# Pre-Depends: <comma-separated list of packages>
+# Depends: <comma-separated list of packages>
+# Recommends: <comma-separated list of packages>
+# Suggests: <comma-separated list of packages>
+# Provides: <comma-separated list of packages>
+# Replaces: <comma-separated list of packages>
+Architecture: amd64
+# Multi-Arch: <one of: foreign|same|allowed>
+Copyright: LICENSE.txt
+#Changelog: CHANGES.md
+Readme: README.md
+# Extra-Files: <comma-separated list of additional files for the doc directory>
+# Links: <pair of space-separated paths; First is path symlink points at, second is filename of link>
+# Files: <pair of space-separated paths; First is file to include, second is destination>
+#  <more pairs, if there's more than one file to include. Notice the starting space>
+Files: package/usr/local/bin/c_rehash /usr/local/bin
+ package/usr/local/bin/openssl /usr/local/bin
+ package/usr/local/lib64/engines-3/afalg.so /usr/local/lib64/engines-3
+ package/usr/local/lib64/engines-3/capi.so /usr/local/lib64/engines-3
+ package/usr/local/lib64/engines-3/loader_attic.so /usr/local/lib64/engines-3
+ package/usr/local/lib64/engines-3/padlock.so /usr/local/lib64/engines-3
+ package/usr/local/lib64/libcrypto.so /usr/local/lib64
+ package/usr/local/lib64/libcrypto.so.3 /usr/local/lib64
+ package/usr/local/lib64/libssl.so /usr/local/lib64
+ package/usr/local/lib64/libssl.so.3 /usr/local/lib64
+ package/usr/local/lib64/ossl-modules/legacy.so /usr/local/lib64/ossl-modules
+ package/usr/local/lib64/pkgconfig/libcrypto.pc /usr/local/lib64/pkgconfig
+ package/usr/local/lib64/pkgconfig/libssl.pc /usr/local/lib64/pkgconfig
+ package/usr/local/lib64/pkgconfig/openssl.pc /usr/local/lib64/pkgconfig
+ package/usr/local/share/doc/openssl/html/man1/CA.pl.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-asn1parse.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-ca.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-ciphers.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-cmds.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-cmp.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-cms.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-crl.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-crl2pkcs7.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-dgst.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-dhparam.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-dsa.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-dsaparam.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-ec.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-ecparam.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-enc.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-engine.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-errstr.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-fipsinstall.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-format-options.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-gendsa.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-genpkey.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-genrsa.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-info.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-kdf.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-list.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-mac.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-nseq.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-ocsp.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-passwd.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-pkcs12.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-pkcs7.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-pkcs8.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-pkey.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-pkeyparam.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-pkeyutl.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-prime.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-rand.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-rehash.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-req.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-rsa.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-rsautl.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-s_client.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-s_server.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-s_time.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-sess_id.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-smime.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-speed.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-spkac.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-srp.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-storeutl.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-ts.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-verify.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-version.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl-x509.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/openssl.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man1/tsget.html /usr/local/share/doc/openssl/html/man1
+ package/usr/local/share/doc/openssl/html/man7/openssl-env.html /usr/local/share/doc/openssl/html/man7
+ package/usr/local/share/doc/openssl/html/man7/openssl-glossary.html /usr/local/share/doc/openssl/html/man7
+ package/usr/local/share/man/man1/CA.pl.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/c_rehash.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-asn1parse.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-ca.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-ciphers.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-cmds.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-cmp.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-cms.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-crl.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-crl2pkcs7.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-dgst.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-dhparam.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-dsa.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-dsaparam.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-ec.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-ecparam.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-enc.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-engine.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-errstr.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-fipsinstall.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-gendsa.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-genpkey.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-genrsa.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-info.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-kdf.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-list.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-mac.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-namedisplay-options.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-nseq.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-ocsp.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-passwd.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-pkcs12.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-pkcs7.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-pkcs8.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-pkey.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-pkeyparam.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-pkeyutl.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-prime.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-rand.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-rehash.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-req.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-rsa.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-rsautl.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-s_client.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-s_server.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-s_time.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-sess_id.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-smime.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-speed.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-spkac.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-srp.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-storeutl.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-ts.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-verify.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-version.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl-x509.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/openssl.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man1/tsget.1ossl /usr/local/share/man/man1
+ package/usr/local/share/man/man5/config.5ossl /usr/local/share/man/man5
+ package/usr/local/share/man/man5/x509v3_config.5ossl /usr/local/share/man/man5
+ package/usr/local/share/man/man7/ssl.7ossl /usr/local/share/man/man7
+ package/usr/local/ssl/ct_log_list.cnf /usr/local/ssl
+ package/usr/local/ssl/ct_log_list.cnf.dist /usr/local/ssl
+ package/usr/local/ssl/misc/CA.pl /usr/local/ssl/misc
+ package/usr/local/ssl/misc/tsget /usr/local/ssl/misc
+ package/usr/local/ssl/misc/tsget.pl /usr/local/ssl/misc
+ package/usr/local/ssl/openssl.cnf /usr/local/ssl
+ package/usr/local/ssl/openssl.cnf.dist /usr/local/ssl
+
+Description: OpenSSL version 3.x binaries
+ OpenSSL is a robust, commercial-grade, full-featured toolkit for general-
+ purpose cryptography and secure communication.
+ .
+ This package contains version 3.x binaries, tools, and shared libraries.
+
