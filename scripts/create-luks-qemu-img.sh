@@ -40,8 +40,15 @@ cleanup()
 	highlight "Cleaning up..."
 
 	# Unmount filesystems
-	[ -d ${REF_MNT} ] && umount -R ${REF_MNT} && rmdir ${REF_MNT}
-	[ -d ${LUKS_MNT} ] && umount -R ${LUKS_MNT} && rmdir ${LUKS_MNT}
+	if mount | grep ${REF_MNT} > /dev/null 2>&1; then
+		umount -R ${REF_MNT}
+		rmdir ${REF_MNT}
+	fi
+
+	if mount | grep ${LUKS_MNT} > /dev/nul 2>&1; then
+		umount -R ${LUKS_MNT}
+		rmdir ${LUKS_MNT}
+	fi
 
 	# Close the LUKS device
 	[ -a /dev/mapper/${LUKS_DM_NAME} ] && cryptsetup close ${LUKS_DM_NAME}
