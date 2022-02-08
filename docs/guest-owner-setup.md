@@ -3,13 +3,13 @@
 This guide will cover the installation and configuration of the services required from the Guest Owner's infrastructure. All services can run on the same server, referred to as the "attestation server."
 
 The necessary services include the following:
-* [SEV Tool](https://github.com/AMDESE/sev-guest/new/main/docs#sev-tool)
-* [`sev-guest` Utility](https://github.com/AMDESE/sev-guest/new/main/docs#sev-guest-utility)
-* [Web Server](https://github.com/AMDESE/sev-guest/new/main/docs#web-server)
-* [CGI Backend](https://github.com/AMDESE/sev-guest/new/main/docs#cgi-backend)
-* [Disk Key Database](https://github.com/AMDESE/sev-guest/new/main/docs#disk-key-database) (*disk encryption example only*)
-* [Guest Disk Encryption](https://github.com/AMDESE/sev-guest/new/main/docs#guest-disk-encryption) (*disk encryption example only*)
-* [User Notification](https://github.com/AMDESE/sev-guest/new/main/docs#user-notification) (*SSH key exchange example only*)
+* [SEV Tool](https://github.com/AMDESE/sev-guest/blob/main/docs/guest-owner-setup.md#sev-tool)
+* [`sev-guest` Utility](https://github.com/AMDESE/sev-guest/blob/main/docs/guest-owner-setup.md#sev-guest-utility)
+* [Web Server](https://github.com/AMDESE/sev-guest/blob/main/docs/guest-owner-setup.md#web-server)
+* [CGI Backend](https://github.com/AMDESE/sev-guest/blob/main/docs/guest-owner-setup.md#cgi-backend)
+* [Disk Key Database](https://github.com/AMDESE/sev-guest/blob/main/docs/guest-owner-setup.md#disk-key-database) (*disk encryption example only*)
+* [Guest Disk Encryption](https://github.com/AMDESE/sev-guest/blob/main/docs/guest-owner-setup.md#guest-disk-encryption) (*disk encryption example only*)
+* [User Notification](https://github.com/AMDESE/sev-guest/blob/main/docs/guest-owner-setup.md#user-notification) (*SSH key exchange example only*)
 
 **All commands shown below must be executed from the top-level directory of this repository.**
 
