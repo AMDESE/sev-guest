@@ -257,7 +257,7 @@ int get_report(const uint8_t *data, size_t data_size,
 	int fd = -1;
 	struct snp_report_req req;
 	struct snp_report_resp resp;
-	struct snp_user_guest_request guest_req;
+	struct snp_guest_request_ioctl guest_req;
 	struct msg_report_resp *report_resp = (struct msg_report_resp *)&resp.data;
 
 	if (!report) {
@@ -272,13 +272,13 @@ int get_report(const uint8_t *data, size_t data_size,
 
 	/* Initialize data structures */
 	memset(&req, 0, sizeof(req));
-	req.msg_version = 1;
 	if (data)
 		memcpy(&req.user_data, data, data_size);
 
 	memset(&resp, 0, sizeof(resp));
 
 	memset(&guest_req, 0, sizeof(guest_req));
+	guest_req.msg_version = 1;
 	guest_req.req_data = (__u64) &req;
 	guest_req.resp_data = (__u64) &resp;
 
@@ -334,7 +334,7 @@ int get_extended_report(const uint8_t *data, size_t data_size,
 	int fd = -1;
 	struct snp_ext_report_req req;
 	struct snp_report_resp resp;
-	struct snp_user_guest_request guest_req;
+	struct snp_guest_request_ioctl guest_req;
 	struct msg_report_resp *report_resp = (struct msg_report_resp *)&resp.data;
 	struct cert_table certs_data;
 	size_t page_size = 0, nr_pages = 0;
@@ -351,7 +351,6 @@ int get_extended_report(const uint8_t *data, size_t data_size,
 
 	/* Initialize data structures */
 	memset(&req, 0, sizeof(req));
-	req.data.msg_version = 1;
 #if 1
 	req.certs_address = (__u64)-1;	/* Invalid, non-zero address */
 #endif
@@ -361,6 +360,7 @@ int get_extended_report(const uint8_t *data, size_t data_size,
 	memset(&resp, 0, sizeof(resp));
 
 	memset(&guest_req, 0, sizeof(guest_req));
+	guest_req.msg_version = 1;
 	guest_req.req_data = (__u64) &req;
 	guest_req.resp_data = (__u64) &resp;
 
