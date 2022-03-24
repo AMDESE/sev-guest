@@ -252,7 +252,7 @@ int request_key(struct options *options, uint8_t *key, size_t size)
 	int fd = -1;
 	struct snp_derived_key_req req;
 	struct snp_derived_key_resp resp;
-	struct snp_user_guest_request guest_req;
+	struct snp_guest_request_ioctl guest_req;
 	struct msg_key_resp *key_resp = (struct msg_key_resp *)&resp.data;
 
 	if (!options || !key || size < sizeof(key_resp->derived_key)) {
@@ -262,16 +262,16 @@ int request_key(struct options *options, uint8_t *key, size_t size)
 
 	/* Initialize data structures */
 	memset(&req, 0, sizeof(req));
-	req.msg_version = 1;
-	req.data.root_key_select = options->do_root_key ? MSG_KEY_REQ_ROOT_KEY_SELECT_MASK
+	req.root_key_select = options->do_root_key ? MSG_KEY_REQ_ROOT_KEY_SELECT_MASK
 							: 0;
-	req.data.guest_field_select = options->fields;
-	req.data.guest_svn = options->svn;
-	memcpy(&req.data.tcb_version, &options->tcb, sizeof(req.data.tcb_version));
+	req.guest_field_select = options->fields;
+	req.guest_svn = options->svn;
+	memcpy(&req.tcb_version, &options->tcb, sizeof(req.tcb_version));
 
 	memset(&resp, 0, sizeof(resp));
 
 	memset(&guest_req, 0, sizeof(guest_req));
+	guest_req.msg_version = 1;
 	guest_req.req_data = (__u64) &req;
 	guest_req.resp_data = (__u64) &resp;
 
