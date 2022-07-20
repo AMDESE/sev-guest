@@ -14,6 +14,8 @@
 #define CURVE_NAME_SIZE	(16)
 #define SEV_CURVE_NAME	"secp384r1"
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+
 static int validate_evp_key(EVP_PKEY *key)
 {
 	int rc = -EXIT_FAILURE;
@@ -49,6 +51,15 @@ static int validate_evp_key(EVP_PKEY *key)
 out:
 	return rc;
 }
+
+#else
+
+static int validate_evp_key(EVP_PKEY *key)
+{
+	return EXIT_SUCCESS;
+}
+
+#endif
 
 static bool is_curve_valid(enum ecdsa_curve curve)
 {
@@ -141,14 +152,13 @@ int sev_ecdsa_pubkey_init(struct sev_ecdsa_pubkey *pubkey, EVP_PKEY *evp_key)
 	if (rc != EXIT_SUCCESS)
 		goto out;
 
-	EVP_PKEY_get_octet_string_param(evp_key, "encoded-pub-key", NULL, 0, &size);
+	EVP_PKEY_get_raw_public_key(evp_key, NULL, &size);
 	if (size - 1 > sizeof(pubkey->bytes)) {
 		rc = ENOBUFS;
 		goto out;
 	}
 
-	if (!EVP_PKEY_get_octet_string_param(evp_key, "encoded-pub-key",
-	    q.bytes, sizeof(q.bytes), &size)) {
+	if (!EVP_PKEY_get_raw_public_key(evp_key, q.bytes, &size)) {
 		ERR_print_errors_fp(stderr);
 		rc = -EXIT_FAILURE;
 		goto out;
@@ -261,7 +271,7 @@ int sev_ecdsa_sign(const void *msg, size_t msg_size, EVP_PKEY *key, union sev_ec
 		goto out;
 	}
 
-	if (!EVP_DigestSignInit_ex(md_ctx, &sign_ctx, "SHA384", NULL, NULL, key, NULL)) {
+	if (!EVP_DigestSignInit(md_ctx, &sign_ctx, EVP_sha384(), NULL, key)) {
 		ERR_print_errors_fp(stderr);
 		rc = -EXIT_FAILURE;
 		goto out_md_ctx;

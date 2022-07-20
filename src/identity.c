@@ -7,9 +7,9 @@
 #include <getopt.h>
 #include <errno.h>
 #include <string.h>
-#include <openssl/decoder.h>
 #include <openssl/evp.h>
 #include <openssl/bio.h>
+#include <openssl/opensslv.h>
 #include <id-block.h>
 
 #ifndef PROG_NAME
@@ -316,6 +316,10 @@ out:
 	return rc;
 }
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+
+#include <openssl/decoder.h>
+
 int read_key_file(const char *filename, EVP_PKEY **key)
 {
 	int rc = -EXIT_FAILURE;
@@ -362,6 +366,73 @@ out:
 	return rc;
 }
 
+#else
+
+#include <openssl/pem.h>
+#include <openssl/x509.h>
+
+int read_key_file(const char *filename, EVP_PKEY **key)
+{
+	int rc = -EXIT_FAILURE;
+	BIO* bio = NULL;
+	EVP_PKEY *pkey;
+
+	if (!filename || !key) {
+		rc = EINVAL;
+		goto out;
+	}
+
+	/* Open for reading */
+	bio = BIO_new_file(filename, "r");
+	if (!bio) {
+		rc = - EXIT_FAILURE;
+		goto out;
+	}
+
+	rc = EXIT_SUCCESS;
+
+    if ((pkey = d2i_PrivateKey_bio(bio, NULL))) {
+		goto out;
+	}
+
+    BIO_reset(bio);
+    if ((*key = d2i_PKCS8PrivateKey_bio(bio, NULL, NULL, NULL))) {
+		goto out;
+	}
+
+	BIO_reset(bio);
+    if ((*key = d2i_PUBKEY_bio(bio, NULL))) {
+		goto out;
+	}
+
+	BIO_reset(bio);
+    /* PEM_read_bio_PrivateKey() also parses PKCS #8 formats */
+    if ((*key = PEM_read_bio_PrivateKey(bio, NULL, NULL, NULL))) {
+		goto out;
+	}
+
+    BIO_reset(bio);
+    if ((*key = PEM_read_bio_PUBKEY(bio, NULL, NULL, NULL))) {
+		goto out;
+	}
+
+    BIO_reset(bio);
+	if ((pkey = PEM_read_bio_Parameters(bio, NULL))) {
+		goto out;
+	}
+	rc = -EXIT_FAILURE;
+
+out:
+	if (bio) {
+		BIO_free(bio);
+		bio = NULL;
+	}
+
+	return rc;
+}
+
+#endif
+
 void print_byte_array(const char *label, const uint8_t *array, size_t size)
 {
 	if (label)
@@ -384,7 +455,8 @@ int print_pubkey_fingerprint(EVP_PKEY *key, const char *label)
 	int rc = -EXIT_FAILURE;
 	struct sev_ecdsa_pubkey sev_pubkey;
 	uint8_t md[EVP_MAX_MD_SIZE] = {0};
-	size_t size = sizeof(md);
+	unsigned int size = sizeof(md);
+	const EVP_MD* md_ctx = EVP_sha384();
 
 	if (!key) {
 		rc = EINVAL;
@@ -397,7 +469,9 @@ int print_pubkey_fingerprint(EVP_PKEY *key, const char *label)
 		goto out;
 
 	/* Hash the SEV public key */
-	if (!EVP_Q_digest(NULL, "sha384", NULL, &sev_pubkey, sizeof(sev_pubkey), md, &size)) {
+	rc = EVP_Digest(&sev_pubkey, sizeof(sev_pubkey), md, &size, md_ctx, NULL);
+
+	if (!rc) {
 		rc = -EXIT_FAILURE;
 		goto out;
 	}
