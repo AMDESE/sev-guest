@@ -31,6 +31,7 @@ struct options {
 	const char *digest_name;
 	const char *report_filename;
 	const char *cert_dirname;
+	uint8_t     vmpl;
 	bool        do_extended_report;
 	bool        do_custom_digest;
 	bool	    do_help;
@@ -40,7 +41,7 @@ void print_usage(void)
 {
 	fprintf(stderr,
 		"Usage: " PROG_NAME " [-f|--data-file data_file] [-d|--digest digest_name]\n"
-		"       [-x|--extended] [-o|--out-dir dir] [-h|--help] report_file\n"
+		"       [-x|--extended] [-v|--vmpl level] [-h|--help] report_file\n"
 		"\n"
 		"Retrieve the attestation report from the SEV-SNP firmware and write it to\n"
 		"'report_file'.\n"
@@ -64,17 +65,21 @@ void print_usage(void)
 		"  -c|--cert-dir dir\n"
 		"    Write any certificates retrieved with -x to 'dir'. Ignored unless -x is\n"
 		"    also specified.\n"
+		"\n"
+		"  -v|--vmpl level\n"
+		"    Request a report for VM Permission Level 'level' (0-3). Default: 0.\n"
 		"\n");
 }
 
 int parse_options(int argc, char *argv[], struct options *options)
 {
 	int rc = EXIT_FAILURE;
-	char *short_options = "c:d:f:hx";
+	char *short_options = "c:d:f:v:hx";
 	struct option long_options[] = {
 		{ "cert-dir",  required_argument, NULL, 'c' },
 		{ "digest",    required_argument, NULL, 'd' },
 		{ "data-file", required_argument, NULL, 'f' },
+		{ "vmpl",      required_argument, NULL, 'v' },
 		{ "help",      no_argument,       NULL, 'h' },
 		{ "extended",  no_argument,       NULL, 'x' },
 		{0},
@@ -86,6 +91,8 @@ int parse_options(int argc, char *argv[], struct options *options)
 	}
 
 	do {
+		unsigned long value;
+		char *end;
 		char option = getopt_long(argc, argv,
 					  short_options, long_options, NULL);
 		if (option == -1)
@@ -101,6 +108,33 @@ int parse_options(int argc, char *argv[], struct options *options)
 			break;
 		case 'f':
 			options->data_filename = optarg;
+			break;
+		case 'v':
+			if (*optarg == '\0') {
+				fprintf(stderr, "-%c: VMPL is empty!\n", option);
+				rc = EINVAL;
+				goto out;
+			}
+
+			errno = 0;
+			value = strtoul(optarg, &end, 10);
+			if (end && *end != '\0') {
+				fprintf(stderr, "-%c: invalid decimal digit '%c'.\n", option, *end);
+				rc = EINVAL;
+				goto out;
+			}
+			else if (errno != 0) {
+				fprintf(stderr, "-%c: %s\n", option, strerror(errno));
+				rc = errno;
+				goto out;
+			}
+
+			if (value > 3) {
+				fprintf(stderr, "-%c: invalid VMPL value %lu.\n", option, value);
+				rc = EINVAL;
+				goto out;
+			}
+			options->vmpl = (uint8_t)value;
 			break;
 		case 'x':
 			options->do_extended_report = true;
@@ -250,7 +284,7 @@ void print_digest(const uint8_t *digest, size_t size)
 	putchar('\n');
 }
 
-int get_report(const uint8_t *data, size_t data_size,
+int get_report(uint8_t vmpl, const uint8_t *data, size_t data_size,
 	       struct attestation_report *report)
 {
 	int rc = EXIT_FAILURE;
@@ -272,6 +306,7 @@ int get_report(const uint8_t *data, size_t data_size,
 
 	/* Initialize data structures */
 	memset(&req, 0, sizeof(req));
+	req.vmpl = vmpl;
 	if (data)
 		memcpy(&req.user_data, data, data_size);
 
@@ -326,7 +361,7 @@ out:
 	return rc;
 }
 
-int get_extended_report(const uint8_t *data, size_t data_size,
+int get_extended_report(uint8_t vmpl, const uint8_t *data, size_t data_size,
 			struct attestation_report *report,
 			uint8_t **certs, size_t *certs_size)
 {
@@ -351,6 +386,7 @@ int get_extended_report(const uint8_t *data, size_t data_size,
 
 	/* Initialize data structures */
 	memset(&req, 0, sizeof(req));
+	req.data.vmpl = vmpl;
 #if 1
 	req.certs_address = (__u64)-1;	/* Invalid, non-zero address */
 #endif
@@ -654,7 +690,7 @@ int main(int argc, char *argv[])
 
 	/* Retrieve the attestation report from the SEV FW */
 	if (options.do_extended_report) {
-		rc = get_extended_report(hash, hash_size, &report, &certs, &certs_size);
+		rc = get_extended_report(options.vmpl, hash, hash_size, &report, &certs, &certs_size);
 		if (rc != EXIT_SUCCESS) {
 			errno = rc;
 			perror("get_extended_report");
@@ -669,7 +705,7 @@ int main(int argc, char *argv[])
 		}
 	}
 	else {
-		rc = get_report(hash, hash_size, &report);
+		rc = get_report(options.vmpl, hash, hash_size, &report);
 		if (rc != EXIT_SUCCESS) {
 			errno = rc;
 			perror("get_report");
