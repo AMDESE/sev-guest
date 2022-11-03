@@ -15,8 +15,8 @@
 #include <linux/psp-sev.h>
 #include <cert-table.h>
 
-#define  SNP_SET_EXT_CONFIG 55
-#define  SNP_GET_EXT_CONFIG 56
+#define  SNP_SET_EXT_CONFIG 10
+#define  SNP_GET_EXT_CONFIG 11
 
 
 struct sev_user_data_ext_snp_config {
