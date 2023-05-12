@@ -45,7 +45,7 @@ void print_usage(void)
 		"will include the public portion of the key specified in 'id_key' and will be\n"
 		"signed using the private portion of the same key.\n"
 		"\n"
-		"The second form calcualates the SHA-384 fingerprint of the given public key\n"
+		"The second form calculates the SHA-384 fingerprint of the given public key\n"
 		"files after converting them to the SEV public key format.\n"
 		"\n"
 		"options:\n"
@@ -63,7 +63,7 @@ void print_usage(void)
 		"    hex string.\n"
 		"    Default is 0x0.\n"
 		"\n"
-		"  -f|--famiy-id id\n"
+		"  -f|--family-id id\n"
 		"    Specifies an optional Family ID of the guest image.\n"
 		"    Default is 0.\n"
 		"\n"
@@ -550,4 +550,3 @@ exit_keys:
 exit:
 	exit(rc);
 }
-
