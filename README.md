@@ -31,5 +31,5 @@ Future updates to this repository will include additional examples of how to per
 ## Resources
 
 1. [AMD SEV-SNP ABI Specification (PDF)](https://www.amd.com/system/files/TechDocs/56860.pdf)
-2. [AMD Signing Key (ASK) and AMD Root Key (ARK) Certificates for Milan Processors](https://developer.amd.com/wp-content/resources/ask_ark_milan.cert)
+2. [AMD Signing Key (ASK) and AMD Root Key (ARK) Certificates for Milan Processors](https://download.amd.com/developer/eula/sev/ask_ark_milan.cert)
 
