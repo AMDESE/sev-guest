@@ -1,3 +1,14 @@
+# &#x26A0; Deprecated &#x26A0;
+
+With the release of tooling by the [VirTEE](https://virtee.io) organization, this tool is now considered deprecated. Consult the following table for replacement tooling:
+
+|Technologies|Replacement|
+|-:|:-|
+|Complete Library Support|[sev](https://github.com/virtee/sev)|
+|Legacy SEV and SEV-ES|[sevctl](https://github.com/virtee/sevctl)|
+|SEV-SNP Guest Tooling|[snpguest](https://github.com/virtee/snpguest)|
+|SEV-SNP Host Tooling|[snphost](https://github.com/virtee/snphost)|
+
 # SEV-SNP Attestation Examples
 
 This repository contains source, scripts, and configuration files for several open source tools that can be used together to demonstrate one way to perform remote attestation of SEV-SNP guests.
