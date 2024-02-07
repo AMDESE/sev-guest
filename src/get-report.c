@@ -36,6 +36,37 @@ struct options {
 	bool	    do_help;
 };
 
+/*
+ * Layout of snp_guest_request_ioctl
+ * since kernel v6.4:
+ * struct snp_guest_request_ioctl {
+ *
+ *	__u8 msg_version;
+ *
+ *	__u64 req_data;
+ *	__u64 resp_data;
+ *
+ *	union {
+ *		__u64 exitinfo2;
+ *		struct {
+ *			__u32 fw_error;
+ *			__u32 vmm_error;
+ *		};
+ *	};
+ * };
+*/
+struct guest_request_ioctl {
+  /* message version number (must be non-zero) */
+  __u8 msg_version;
+
+  /* Request and response structure address */
+  __u64 req_data;
+  __u64 resp_data;
+
+  __u64 fw_err;
+};
+
+
 void print_usage(void)
 {
 	fprintf(stderr,
@@ -257,7 +288,7 @@ int get_report(const uint8_t *data, size_t data_size,
 	int fd = -1;
 	struct snp_report_req req;
 	struct snp_report_resp resp;
-	struct snp_guest_request_ioctl guest_req;
+	struct guest_request_ioctl guest_req;
 	struct msg_report_resp *report_resp = (struct msg_report_resp *)&resp.data;
 
 	if (!report) {
@@ -334,7 +365,7 @@ int get_extended_report(const uint8_t *data, size_t data_size,
 	int fd = -1;
 	struct snp_ext_report_req req;
 	struct snp_report_resp resp;
-	struct snp_guest_request_ioctl guest_req;
+	struct guest_request_ioctl guest_req;
 	struct msg_report_resp *report_resp = (struct msg_report_resp *)&resp.data;
 	struct cert_table certs_data;
 	size_t page_size = 0, nr_pages = 0;
